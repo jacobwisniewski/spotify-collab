@@ -1,9 +1,5 @@
-export interface Integration {
+export interface Integration {}
 
-}
+const Integration: Integration = {};
 
-const Integration: Integration = {
-
-}
-
-export default Integration
+export default Integration;

@@ -1,7 +1,5 @@
 import { Integration } from "./Integration";
 
-const MockIntegration: Integration = {
+const MockIntegration: Integration = {};
 
-}
-
-export default MockIntegration
+export default MockIntegration;
