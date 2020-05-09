@@ -1,11 +1,11 @@
 import { CollabAction, CollabActionType } from "./CollabActions";
 import { Reducer } from "react";
-import { CollabState } from "./CollabInitialState";
+import { AppState } from "./CollabInitialState";
 
 const CollabReducer: Reducer<
-  CollabState,
+  AppState,
   CollabAction<CollabActionType, any>
-> = (prevState, action): CollabState => {
+> = (prevState, action): AppState => {
   return prevState;
 };
 

@@ -3,11 +3,27 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
+    "@types/cookie-parser": "^1.4.2",
+    "@types/cors": "^2.8.6",
     "@types/express": "^4.17.6",
+    "@types/jsonwebtoken": "^8.3.9",
+    "@types/node-fetch": "^2.5.7",
+    "@types/pg": "^7.14.3",
+    "claudia-api-builder": "^4.1.2",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "node-fetch": "^2.6.0",
+    "pg": "^8.0.2",
     "prettier": "^2.0.4"
   },
   "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "nodemon": "^2.0.3",
+    "ts-node": "^8.9.1",
     "tslint": "^6.1.1",
     "typescript": "^3.8.3"
   },
@@ -16,11 +32,19 @@
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "node .",
+    "start": "nodemon",
     "format": "prettier --write \"src/**/*.{ts,json}\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "prettier": {
+    "printWidth": 140,
+    "singleQuote": false,
+    "semi": false,
+    "useTabs": false,
+    "tabWidth": 2,
+    "trailingComma": "none"
+  }
 }

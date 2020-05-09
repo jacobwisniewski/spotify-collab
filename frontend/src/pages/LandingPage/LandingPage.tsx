@@ -4,6 +4,17 @@ import React from "react";
 interface LandingPageContainerProps {}
 
 const LandingPageContainer: Container<LandingPageContainerProps> = () => {
+  const spotifyAuthorize = () => {
+    window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/authorize`;
+  };
+
+  const spotifyTokenRefresh = () => {
+    fetch("/api/auth/token", {
+      method: "POST",
+      credentials: "include",
+    }).then((res) => console.log(res));
+  };
+
   return (
     <div>
       <h1>Collab</h1>
@@ -13,7 +24,8 @@ const LandingPageContainer: Container<LandingPageContainerProps> = () => {
         fringilla eu dapibus at, auctor ac lorem. Donec in ipsum vitae sapien
         vestibulum gravida.
       </p>
-        <button>Login with Spotify</button>
+      <button onClick={spotifyAuthorize}>Login with Spotify</button>
+      <button onClick={spotifyTokenRefresh}>Refresh access tokens</button>
     </div>
   );
 };

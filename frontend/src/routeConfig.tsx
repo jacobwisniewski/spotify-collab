@@ -1,8 +1,8 @@
 import LandingPageContainer from "../LandingPageContainer/LandingPageContainer";
 import React, { Dispatch } from "react";
-import { CollabState } from "../../state/CollabInitialState";
+import { AppState } from "../../state/AppState";
 import { Integration } from "../../integrations/Integration";
-import { CollabAction, CollabActionType } from "../../state/CollabActions";
+import { Action, ActionType } from "../../state/AppAction";
 
 interface RouteConfig {
   [k: string]: () => any;
@@ -10,8 +10,8 @@ interface RouteConfig {
 
 const routeConfig = (
   integration: Integration,
-  state: CollabState,
-  dispatch: Dispatch<CollabAction<CollabActionType, any>>
+  state: AppState,
+  dispatch: Dispatch<Action<ActionType, any>>
 ): RouteConfig => {
   return {
     "/": () => (
