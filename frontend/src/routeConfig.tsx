@@ -9,7 +9,7 @@ interface RouteConfig {
 
 const routeConfig: RouteConfig = {
   "/": () => ({ page: LandingPage }),
-  "/@:spotifyId": (params) => (!!params.spotifyId ? { page: ProfilePage, params } : { page: LandingPage })
+  "/@:spotifyId": (params) => ({ page: ProfilePage, params })
 }
 
 export default routeConfig

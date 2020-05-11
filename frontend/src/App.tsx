@@ -11,16 +11,18 @@ interface AppProps {
 }
 
 const App: FunctionComponent<AppProps> = ({ integration }) => {
-  const { page: CurrentRoute, params } = useRoutes(routeConfig)
+  const route = useRoutes(routeConfig)
   const [state, dispatch] = useReducerWithEffects(AppReducer, AppState, {
     integration
   })
 
-  if (!CurrentRoute) {
+  if (!route) {
     navigate("/", true)
 
     return null
   }
+
+  const { page: CurrentRoute, params } = route
 
   return <CurrentRoute integration={integration} state={state} dispatch={dispatch} queryParams={params} />
 }

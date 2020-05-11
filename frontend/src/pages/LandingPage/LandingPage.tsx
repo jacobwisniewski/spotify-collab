@@ -9,6 +9,7 @@ import Field from "../../components/Field/Field"
 
 const LandingPage: Page = ({ state, dispatch }) => {
   const profileSearchError = state.profileSearchErrors.getOrDefault("PROFILE_SEARCH_ERROR", "")
+  const { profileSearchValue } = state
 
   const onSearchChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
     (event) => {
@@ -20,15 +21,15 @@ const LandingPage: Page = ({ state, dispatch }) => {
   const onSearchKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
     (event) => {
       if (event.key === "Enter") {
-        dispatch(profileSearchClick(state.profileSearchValue))
+        dispatch(profileSearchClick(profileSearchValue))
       }
     },
-    [dispatch, state]
+    [dispatch, profileSearchValue]
   )
 
   const onSearchClick = useCallback<ButtonClickHandler>(() => {
-    dispatch(profileSearchClick(state.profileSearchValue))
-  }, [dispatch, state])
+    dispatch(profileSearchClick(profileSearchValue))
+  }, [dispatch, profileSearchValue])
 
   return (
     <div className={styles.LandingPageContainer}>
@@ -41,9 +42,7 @@ const LandingPage: Page = ({ state, dispatch }) => {
       </header>
       <section className={styles.SearchContainer}>
         <Field
-          input={
-            <input className={styles.SearchInput} value={state.profileSearchValue} onChange={onSearchChange} onKeyDown={onSearchKeyDown} />
-          }
+          input={<input className={styles.SearchInput} value={profileSearchValue} onChange={onSearchChange} onKeyDown={onSearchKeyDown} />}
           message={
             <Message type={MessageType.ERROR}>
               {profileSearchError && <div className={styles.SearchInputError}>{profileSearchError}</div>}
