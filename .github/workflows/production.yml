@@ -18,17 +18,15 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-        
-    - name: Change to frontend directory
-      run: |
-        cd frontend
 
     - name: Yarn Install
       run: |
+        cd frontend
         yarn install
         
     - name: Production Build
       run: |
+        cd frontend
         yarn build
       
     - name: Deploy to S3
