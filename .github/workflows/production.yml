@@ -10,7 +10,7 @@ jobs:
     
     strategy:
       matrix:
-        node-version: [8.x, 10.x, 12.x]
+        node-version: [14.x]
 
     steps:
     - uses: actions/checkout@v1
@@ -18,18 +18,16 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-        
-    - name: Change to frontend directory
-      run: |
-        cd frontend
 
     - name: Yarn Install
       run: |
-        yarn install
+        cd frontend
+        npm install
         
     - name: Production Build
       run: |
-        yarn build
+        cd frontend
+        npm run build
       
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
