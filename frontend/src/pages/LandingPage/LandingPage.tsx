@@ -23,12 +23,12 @@ const LandingPage: Page = ({ state, dispatch }) => {
         dispatch(profileSearchClick(state.profileSearchValue))
       }
     },
-    [dispatch, state.profileSearchValue]
+    [dispatch, state]
   )
 
   const onSearchClick = useCallback<ButtonClickHandler>(() => {
     dispatch(profileSearchClick(state.profileSearchValue))
-  }, [dispatch, state.profileSearchValue])
+  }, [dispatch, state])
 
   return (
     <div className={styles.LandingPageContainer}>
