@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactElement, ReactNode } from "react"
+import React, { FunctionComponent, ReactNode } from "react"
 import styles from "./Message.module.css"
 
 export enum MessageType {

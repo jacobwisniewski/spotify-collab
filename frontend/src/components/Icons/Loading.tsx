@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react"
 
 interface LoadingProps {}
 
-const Loading: FunctionComponent<LoadingProps> = ({}) => {
+const Loading: FunctionComponent<LoadingProps> = () => {
   return (
     <svg
       style={{ margin: "auto", background: "none" }}

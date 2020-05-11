@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler, KeyboardEventHandler, useCallback, useState } from "react"
+import React, { ChangeEventHandler, KeyboardEventHandler, useCallback } from "react"
 import { Page } from "../Page"
 import styles from "./LandingPage.module.css"
 import SpotifyLogo from "../../components/Icons/SpotifyLogo"

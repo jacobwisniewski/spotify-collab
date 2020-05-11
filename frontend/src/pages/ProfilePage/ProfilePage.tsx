@@ -40,7 +40,7 @@ const ProfilePageError: FunctionComponent<ProfilePageErrorProps> = ({ onBackClic
 }
 
 const ProfilePage: Page = ({ integration, state, dispatch, queryParams }) => {
-  const { spotify_id, display_name, profile_picture_url, spotify_profile_url, followers } = state.spotifyProfile
+  const { spotify_id, display_name, profile_picture_url, spotify_profile_url } = state.spotifyProfile
   const { spotifyId } = queryParams
   const isInitial = state.spotifyProfileStatus === SpotifyProfileStatus.INITIAL
   const isLoading = state.spotifyProfileStatus === SpotifyProfileStatus.LOADING
