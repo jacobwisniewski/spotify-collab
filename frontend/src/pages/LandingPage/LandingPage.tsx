@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler, KeyboardEventHandler, useCallback, useEffect } from "react"
+import React, { ChangeEventHandler, KeyboardEventHandler, useCallback } from "react"
 import { Page } from "../Page"
 import styles from "./LandingPage.module.css"
 import SpotifyLogo from "../../components/Icons/SpotifyLogo"
@@ -10,10 +10,6 @@ import Field from "../../components/Field/Field"
 const LandingPage: Page = ({ state, dispatch }) => {
   const profileSearchError = state.profileSearchErrors.getOrDefault("PROFILE_SEARCH_ERROR", "")
 
-  useEffect(() => {
-    dispatch(profileSearchChange(""))
-  }, [])
-
   const onSearchChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
     (event) => {
       const searchValue = event.target.value
@@ -24,15 +20,15 @@ const LandingPage: Page = ({ state, dispatch }) => {
   const onSearchKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
     (event) => {
       if (event.key === "Enter") {
-        dispatch(profileSearchClick())
+        dispatch(profileSearchClick(state.profileSearchValue))
       }
     },
-    [dispatch]
+    [dispatch, state.profileSearchValue]
   )
 
   const onSearchClick = useCallback<ButtonClickHandler>(() => {
-    dispatch(profileSearchClick())
-  }, [dispatch])
+    dispatch(profileSearchClick(state.profileSearchValue))
+  }, [dispatch, state.profileSearchValue])
 
   return (
     <div className={styles.LandingPageContainer}>

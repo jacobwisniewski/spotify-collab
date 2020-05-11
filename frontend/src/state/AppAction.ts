@@ -35,10 +35,10 @@ export const profileSearchChange = (spotifyId: string): ProfileSearchChangeActio
   payload: spotifyId
 })
 
-export type ProfileSearchClickAction = Action<"PROFILE_SEARCH_CLICK", undefined>
-export const profileSearchClick = (): ProfileSearchClickAction => ({
+export type ProfileSearchClickAction = Action<"PROFILE_SEARCH_CLICK", string>
+export const profileSearchClick = (spotifyId: string): ProfileSearchClickAction => ({
   type: "PROFILE_SEARCH_CLICK",
-  payload: undefined,
+  payload: spotifyId,
   effects: profileSearchClickEffect
 })
 

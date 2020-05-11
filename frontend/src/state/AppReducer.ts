@@ -32,7 +32,8 @@ const AppReducer: Reducer<AppState, AppAction> = (prevState, action): AppState =
     case "PROFILE_SEARCH_CLICK":
       return {
         ...prevState,
-        profileSearchErrors: applyValidationResults([validateProfileSearch(prevState.profileSearchValue)], prevState.profileSearchErrors)
+        profileSearchErrors: applyValidationResults([validateProfileSearch(prevState.profileSearchValue)], prevState.profileSearchErrors),
+        profileSearchValue: ""
       }
 
     case "NAVIGATE_TO_LANDING_PAGE":
