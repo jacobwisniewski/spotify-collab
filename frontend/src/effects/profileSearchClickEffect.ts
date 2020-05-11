@@ -4,8 +4,9 @@ import { ProfileSearchClickAction, spotifyProfileLoading } from "../state/AppAct
 
 const profileSearchClickEffect: AppEffect = async (state, action, context) => {
   if (state.profileSearchErrors.size() === 0) {
-    navigate(`/@${state.profileSearchValue}`)
-    return spotifyProfileLoading((action as ProfileSearchClickAction).payload)
+    const profileSearchValue = (action as ProfileSearchClickAction).payload
+    navigate(`/@${profileSearchValue}`)
+    return spotifyProfileLoading(profileSearchValue)
   }
 }
 
