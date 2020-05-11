@@ -1,27 +1,19 @@
-import LandingPageContainer from "../LandingPageContainer/LandingPageContainer";
-import React, { Dispatch } from "react";
-import { AppState } from "../../state/AppState";
-import { Integration } from "../../integrations/Integration";
-import { Action, ActionType } from "../../state/AppAction";
+import { Page } from "./pages/Page"
+import LandingPage from "./pages/LandingPage/LandingPage"
+import ProfilePage from "./pages/ProfilePage/ProfilePage"
+import { HookRouter } from "hookrouter"
 
 interface RouteConfig {
-  [k: string]: () => any;
+  [k: string]: (params: HookRouter.QueryParams) => { page: Page; params?: HookRouter.QueryParams }
 }
 
-const routeConfig = (
-  integration: Integration,
-  state: AppState,
-  dispatch: Dispatch<Action<ActionType, any>>
-): RouteConfig => {
-  return {
-    "/": () => (
-      <LandingPageContainer
-        integration={integration}
-        state={state}
-        dispatch={dispatch}
-      />
-    ),
-  };
-};
+const routeConfig: RouteConfig = {
+  "/": () => {
+    return { page: LandingPage }
+  },
+  "/@:spotifyId": (params) => {
+    return { page: ProfilePage, params }
+  }
+}
 
-export default routeConfig;
+export default routeConfig

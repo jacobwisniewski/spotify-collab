@@ -1,5 +1,16 @@
-export interface Integration {}
+import { SpotifyProfileResponse } from "../models/SpotifyProfileResponse"
+import responseToJson from "../utils/responseToJson"
 
-const Integration: Integration = {};
+export interface Integration {
+  getSpotifyProfileData(spotifyId: string): Promise<SpotifyProfileResponse>
+}
 
-export default Integration;
+const Integration: Integration = {
+  getSpotifyProfileData(spotifyId) {
+    return fetch(`${process.env.REACT_APP_BACKEND_ROOT_URL}/api/users/${spotifyId}`, {
+      method: "GET"
+    }).then(responseToJson)
+  }
+}
+
+export default Integration

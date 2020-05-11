@@ -1,0 +1,15 @@
+.FieldContainer {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.InputContainer {
+}
+
+.MessageContainer {
+  display: flex;
+  margin-top: 4px;
+  margin-bottom: 5px;
+}

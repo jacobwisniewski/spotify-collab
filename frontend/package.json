@@ -39,5 +39,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "prettier": {
+    "printWidth": 140,
+    "singleQuote": false,
+    "semi": false,
+    "useTabs": false,
+    "tabWidth": 2,
+    "trailingComma": "none"
   }
 }

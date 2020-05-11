@@ -1,21 +1,28 @@
-import React, { FunctionComponent, useReducer } from "react";
-import AppState from "../../state/AppState";
-import routeConfig from "./routeConfig";
-import { useRoutes } from "hookrouter";
-import AppReducer from "../../state/AppReducer";
-import { Integration } from "../../integrations/Integration";
+import React, { FunctionComponent } from "react"
+import AppState from "./state/AppState"
+import routeConfig from "./routeConfig"
+import { navigate, useRoutes } from "hookrouter"
+import AppReducer from "./state/AppReducer"
+import { Integration } from "./integrations/Integration"
+import useReducerWithEffects from "./hooks/userReducerWithEffects"
 
-interface SpotifyCollabProps {
-    integration: Integration;
+interface AppProps {
+  integration: Integration
 }
 
-const SpotifyCollab: FunctionComponent<SpotifyCollabProps> = ({
-                                                                  integration,
-                                                              }) => {
-    const [state, dispatch] = useReducer(AppReducer, AppState);
-    const CurrentRoute = useRoutes(routeConfig);
+const App: FunctionComponent<AppProps> = ({ integration }) => {
+  const { page: CurrentRoute, params } = useRoutes(routeConfig)
+  const [state, dispatch] = useReducerWithEffects(AppReducer, AppState, {
+    integration
+  })
 
-    return <main>{CurrentRoute ? CurrentRoute : <h1>Page not found.</h1>}</main>;
-};
+  if (!CurrentRoute) {
+    navigate("/", true)
 
-    export default SpotifyCollab;
+    return null
+  }
+
+  return <CurrentRoute integration={integration} state={state} dispatch={dispatch} queryParams={params} />
+}
+
+export default App

@@ -1,0 +1,33 @@
+.Message {
+  align-items: center;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  line-height: 1em;
+  position: relative;
+  white-space: pre-wrap;
+  width: 100%;
+}
+
+.Size_Normal {
+  font-size: 12px;
+}
+
+.Large {
+  font-size: 18px;
+}
+
+.Type_Normal,
+.Type_Normal * {
+  color: var(--text-color-dark);
+}
+
+.Error,
+.Error * {
+  color: var(--text-color-error);
+}
+
+.White,
+.White * {
+  color: var(--text-color-white);
+}

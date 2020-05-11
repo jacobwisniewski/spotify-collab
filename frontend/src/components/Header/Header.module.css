@@ -1,0 +1,12 @@
+.HeaderContainer {
+  width: 100%;
+  background-color: var(--brand-purple-primary);
+  padding-top: var(--spacing-vertical-x-small);
+  padding-bottom: var(--spacing-vertical-x-small);
+}
+
+.Logo {
+  color: var(--text-color-white);
+  cursor: pointer;
+  margin-left: var(--spacing-horizontal-small);
+}

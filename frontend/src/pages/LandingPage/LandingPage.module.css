@@ -1,0 +1,63 @@
+.LandingPageContainer {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(120deg, var(--brand-blue-primary), var(--brand-blue-secondary));
+}
+
+.HeaderContainer {
+  margin-top: -200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.SubtitleContainer {
+  display: flex;
+  flex-direction: row;
+
+  margin-top: var(--spacing-vertical-xx-small);
+  align-items: center;
+  justify-content: center;
+}
+
+.Subtitle {
+  margin-right: var(--spacing-horizontal-xx-small);
+}
+
+.SearchContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 300px;
+
+  margin-top: var(--spacing-vertical-xxx-large);
+}
+
+.SearchInput {
+  border: 1px solid var(--brand-purple-secondary);
+  box-shadow: none;
+  border-radius: 24px;
+
+  font-size: 16px;
+  text-indent: 16px;
+  line-height: 32px;
+  width: 100%;
+}
+
+.SearchInput:focus,
+.SearchInput:hover {
+  border: 1px solid var(--brand-purple-primary);
+  box-shadow: 0 1px 7px 0 rgba(32, 33, 36, 0.28);
+}
+
+.SearchInputError {
+  margin-left: 16px;
+}
