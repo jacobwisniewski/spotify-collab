@@ -1,4 +1,5 @@
-import { Pool, Query, QueryResult } from "pg"
+import { config } from "dotenv"
+import { Pool, QueryResult } from "pg"
 import {
   SpotifyAccessTokenResponse,
   SpotifyPrivateProfileResponse,
@@ -6,6 +7,8 @@ import {
   SpotifyTokenResponse
 } from "../spotify/Integration"
 import { PublicSpotifyProfileData } from "../spotify"
+
+config()
 
 const pool = new Pool({
   user: process.env.DB_USER,
