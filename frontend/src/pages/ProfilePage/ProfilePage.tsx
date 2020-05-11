@@ -45,6 +45,7 @@ const ProfilePage: Page = ({ integration, state, dispatch, queryParams }) => {
   const isInitial = state.spotifyProfileStatus === SpotifyProfileStatus.INITIAL
   const isLoading = state.spotifyProfileStatus === SpotifyProfileStatus.LOADING
   const isError = state.spotifyProfileStatus === SpotifyProfileStatus.ERROR
+  const profilePicture = spotify_profile_url != null ? spotify_profile_url : anonymousProfilePicture
 
   useLayoutEffect(() => {
     if (isInitial) {
@@ -70,7 +71,7 @@ const ProfilePage: Page = ({ integration, state, dispatch, queryParams }) => {
         <ProfilePageError onBackClick={navigateToLandingPageClick} />
       ) : (
         <div className={styles.ProfileContainer}>
-          <img className={styles.ProfilePicture} src={profile_picture_url || anonymousProfilePicture} alt={"Spotify Profile"} />
+          <img className={styles.ProfilePicture} src={profilePicture} alt={"Spotify Profile"} />
           <div className={styles.InfoContainer}>
             <div className={styles.HeaderContainer}>
               <h2 className={styles.Header}>{display_name}</h2>
