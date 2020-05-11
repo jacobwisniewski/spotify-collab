@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler, KeyboardEventHandler, useCallback } from "react"
+import React, { ChangeEventHandler, KeyboardEventHandler, useCallback, useEffect } from "react"
 import { Page } from "../Page"
 import styles from "./LandingPage.module.css"
 import SpotifyLogo from "../../components/Icons/SpotifyLogo"
@@ -9,6 +9,10 @@ import Field from "../../components/Field/Field"
 
 const LandingPage: Page = ({ state, dispatch }) => {
   const profileSearchError = state.profileSearchErrors.getOrDefault("PROFILE_SEARCH_ERROR", "")
+
+  useEffect(() => {
+    dispatch(profileSearchChange(""))
+  }, [])
 
   const onSearchChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
     (event) => {
