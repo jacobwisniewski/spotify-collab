@@ -22,12 +22,12 @@ jobs:
     - name: Yarn Install
       run: |
         cd frontend
-        yarn install
+        npm install
         
     - name: Production Build
       run: |
         cd frontend
-        yarn build
+        npm run build
       
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
