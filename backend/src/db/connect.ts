@@ -1,5 +1,7 @@
+// @ts-nocheck
+
 import { config } from "dotenv"
-import { Pool, QueryResult } from "pg"
+import pg, { Pool, QueryResult } from "pg"
 import {
   SpotifyAccessTokenResponse,
   SpotifyPrivateProfileResponse,
@@ -15,7 +17,8 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
-  port: Number(process.env.DB_PORT)
+  port: Number(process.env.DB_PORT),
+  Client: pg.native.Client
 })
 
 pool.on("error", (err, client) => {

@@ -8,6 +8,9 @@ yarn-error.log*
 /frontend/.pnp.js
 /frontend/build
 
+# Backend environment variables
+/backend/.env
+
 ## Debug
 /frontend/npm-debug.log*
 /frontend/yarn-debug.log*
