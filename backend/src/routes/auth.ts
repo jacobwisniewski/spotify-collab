@@ -114,7 +114,7 @@ const createAccessToken = (spotifyId: string): AccessToken => {
 }
 
 const createRefreshToken = (spotifyId: string): string => {
-  return sign({ spotifyId }, process.env.JWT_REFRESH_TOKEN_SECRET)
+  return sign({ spotifyId }, process.env.JWT_REFRESH_TOKEN_SECRET_KEY)
 }
 
 export default router
