@@ -32,7 +32,7 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "heroku-prebuild": "npm install --prefix frontend && mkdir build/frontend",
+    "heroku-prebuild": "npm install --prefix frontend && mkdir -p ./build/frontend",
     "build": "npx tsc && npm run build --prefix frontend",
     "start": "node build/index.js",
     "dev": "npx ts-node index.ts"
