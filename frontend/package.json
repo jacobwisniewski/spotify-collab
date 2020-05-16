@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && rm -rf ../build/frontend/* && mv ./build/* ../build/frontend && rm -rf ./build"
+    "build": "react-scripts build && rm -rf ../build/frontend/* &&  mv ./build/* ../build/frontend && rm -rf ./build"
   },
   "eslintConfig": {
     "extends": "react-app"
