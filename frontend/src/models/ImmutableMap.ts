@@ -45,7 +45,7 @@ export class ImmutableMap<K, V> {
     return this.internalMap.values()
   }
 
-  getValues = (): Array<V> => {
+  getValues = (): V[] => {
     return Array.from(this.values())
   }
 
@@ -53,7 +53,7 @@ export class ImmutableMap<K, V> {
     return this.internalMap.keys()
   }
 
-  getKeys = (): Array<K> => {
+  getKeys = (): K[] => {
     return Array.from(this.keys())
   }
 

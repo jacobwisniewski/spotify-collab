@@ -23,7 +23,7 @@ router.get("/:spotifyId", async (req, res) => {
     const userSpotifyProfileData = await getPublicSpotifyUserData(spotifyId)
     res.send(userSpotifyProfileData)
   } catch (err) {
-    res.sendStatus(400)
+    res.status(500).send(err)
   }
 })
 

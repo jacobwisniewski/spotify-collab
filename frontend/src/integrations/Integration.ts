@@ -7,7 +7,7 @@ export interface Integration {
 
 const Integration: Integration = {
   getSpotifyProfileData(spotifyId) {
-    return fetch(`${process.env.REACT_APP_BACKEND_ROOT_URL}/api/users/${spotifyId}`, {
+    return fetch(`/api/users/${spotifyId}`, {
       method: "GET"
     }).then(responseToJson)
   }

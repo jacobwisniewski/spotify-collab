@@ -17,9 +17,7 @@ const ProfilePageLoading: FunctionComponent = () => {
   )
 }
 
-interface BackClickHandler {
-  (): void
-}
+type BackClickHandler = () => void
 
 interface ProfilePageErrorProps {
   onBackClick: BackClickHandler
@@ -45,7 +43,7 @@ const ProfilePage: Page = ({ integration, state, dispatch, queryParams }) => {
   const isInitial = state.spotifyProfileStatus === SpotifyProfileStatus.INITIAL
   const isLoading = state.spotifyProfileStatus === SpotifyProfileStatus.LOADING
   const isError = state.spotifyProfileStatus === SpotifyProfileStatus.ERROR
-  const profilePicture = profile_picture_url != null ? spotify_profile_url : anonymousProfilePicture
+  const profilePicture = profile_picture_url != null ? profile_picture_url : anonymousProfilePicture
 
   useLayoutEffect(() => {
     if (isInitial) {

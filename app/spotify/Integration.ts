@@ -1,4 +1,4 @@
-import responseToJson from "../../utils/responseToJson"
+import responseToJson from "../utils/responseToJson"
 import fetch from "node-fetch"
 
 const SPOTIFY_AUTH_BASE_URL = "https://accounts.spotify.com"

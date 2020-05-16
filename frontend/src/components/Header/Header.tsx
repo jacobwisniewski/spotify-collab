@@ -1,9 +1,7 @@
 import React, { FunctionComponent, MouseEventHandler, useCallback } from "react"
 import styles from "./Header.module.css"
 
-export interface HeaderClickHandler {
-  (): void
-}
+export type HeaderClickHandler = () => void
 
 interface HeaderProps {
   onLogoClick: HeaderClickHandler

@@ -1,9 +1,7 @@
 import React, { FunctionComponent, MouseEventHandler, useCallback } from "react"
 import styles from "./Button.module.css"
 
-export interface ButtonClickHandler {
-  (): void
-}
+export type ButtonClickHandler = () => void
 
 interface ButtonProps {
   title: string

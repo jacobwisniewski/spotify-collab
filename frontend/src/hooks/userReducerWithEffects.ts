@@ -1,8 +1,6 @@
 import { useReducer, useRef, useEffect, useCallback, Reducer, Dispatch } from "react"
 
-export interface SideEffect<S, A, C> {
-  (state: S, action: A, context: C): Promise<A | void>
-}
+export type SideEffect<S, A, C> = (state: S, action: A, context: C) => Promise<A | void>
 
 export interface ActionWithEffects<S, A, C> {
   effects?: SideEffect<S, A, C>

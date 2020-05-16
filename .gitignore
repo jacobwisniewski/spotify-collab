@@ -1,22 +1,7 @@
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# React project
-/frontend/node_modules/
-/frontend/.pnp
-/frontend/.pnp.js
-/frontend/build
-
-# Backend environment variables
-/backend/.env
-
-## Debug
-/frontend/npm-debug.log*
-/frontend/yarn-debug.log*
-/frontend/yarn-error.log*
-
-# IDE
 .idea
-/backend/node_modules/
-/backend/dist/
+
+.env
+
+/build
+/node_modules
+/frontend/node_modules

@@ -13,16 +13,16 @@ import { PublicSpotifyProfileData } from "../spotify"
 config()
 
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: Number(process.env.DB_PORT),
+  connectionString: process.env.DATABASE_URL,
   Client: pg.native.Client
 })
 
 pool.on("error", (err, client) => {
   console.error("Error:", err)
+})
+
+pool.on("connect", (client) => {
+ console.log("Database connected.")
 })
 
 interface UserData {
