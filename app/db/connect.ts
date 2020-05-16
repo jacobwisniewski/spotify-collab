@@ -22,7 +22,7 @@ pool.on("error", (err, client) => {
 })
 
 pool.on("connect", (client) => {
- console.log("Database connected.")
+  console.log("Database connected.")
 })
 
 interface UserData {
@@ -44,16 +44,27 @@ interface SpotifyTokens {
 
 interface Queries {
   createSpotifyTokensTable(): Promise<any>
+
   createUsersTable(): Promise<any>
+
   deleteSpotifyTokensTable(): Promise<any>
+
   deleteUsersTable(): Promise<any>
+
   createUserWithSpotifyProfileDateAndTokens(profile: SpotifyPrivateProfileResponse, tokens: SpotifyTokenResponse): Promise<any>
+
   getSpotifyUserData(spotifyId: string): Promise<QueryResult>
+
   updateUserWithTokens(profile: SpotifyPublicProfileResponse, tokens: SpotifyTokenResponse): Promise<any>
+
   getRefreshTokenUser(refreshToken: string): Promise<QueryResult>
+
   updateRefreshToken(refreshToken: string, spotifyId: string): Promise<any>
+
   getUserSpotifyTokens(spotifyId: string): Promise<QueryResult<SpotifyTokens>>
+
   updateUserWithAccessToken(spotifyId: string, token: SpotifyAccessTokenResponse): Promise<any>
+
   createUserWithSpotifyProfileData(userData: SpotifyPublicProfileResponse): Promise<QueryResult<PublicSpotifyProfileData>>
 }
 
@@ -198,7 +209,7 @@ const Queries: Queries = {
         INSERT INTO spotify_tokens (spotify_id, access_token, refresh_token, expires_on)
         VALUES ('${profile.id}', '${token.access_token}', '${token.refresh_token}',
                 to_timestamp(${expiresOn.getTime() / 1000.0}))
-        `;
+        `
 
     return query(queryString)
   }
@@ -212,10 +223,8 @@ const query = (queryString: string): Promise<QueryResult> => {
 }
 
 export const main = async () => {
-  // Queries.deleteUsersTable()
-  //   .then(() => Queries.deleteSpotifyTokensTable())
-  //   .then(() => Queries.createUsersTable())
-  //   .then(() => Queries.createSpotifyTokensTable());
+  Queries.createUsersTable()
+    .then(() => Queries.createSpotifyTokensTable())
 }
 
 export default Queries

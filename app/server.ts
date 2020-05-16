@@ -2,6 +2,7 @@ import express, { Express, Request, Response} from "express"
 import AuthRoute from "./routes/auth"
 import UsersRoute from "./routes/users"
 import * as path from "path"
+import { main } from "./db/connect"
 
 
 export class ExpressServer {
@@ -22,6 +23,8 @@ export class ExpressServer {
   }
 
   public start(port: number): void {
+    main()
     this.app.listen(port, () => console.log(`Server listening on port: ${port}`))
+
   }
 }

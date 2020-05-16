@@ -32,9 +32,10 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "start": "npm run build && node build/index.js",
-    "dev": "npx ts-node index.ts",
-    "build": "npx tsc && npm run build --prefix frontend"
+    "heroku-prebuild": "npm install --prefix frontend",
+    "build": "npx tsc && npm run build --prefix frontend",
+    "start": "node build/index.js",
+    "dev": "npx ts-node index.ts"
   },
   "keywords": [],
   "author": "",
