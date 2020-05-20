@@ -3,17 +3,18 @@
   display: inline-flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  line-height: 1em;
   position: relative;
   white-space: pre-wrap;
   width: 100%;
 }
 
 .Size_Normal {
+  line-height: 12px;
   font-size: 12px;
 }
 
 .Large {
+  line-height: 18px;
   font-size: 18px;
 }
 

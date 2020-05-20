@@ -7,7 +7,7 @@ import Message, { MessageType } from "../../components/Message/Message"
 import { profileSearchChange, profileSearchClick } from "../../state/AppAction"
 import Field from "../../components/Field/Field"
 
-const LandingPage: Page = ({ state, dispatch }) => {
+const LandingPage: Page = ({ integration, state, dispatch }) => {
   const profileSearchError = state.profileSearchErrors.getOrDefault("PROFILE_SEARCH_ERROR", "")
   const { profileSearchValue } = state
 
@@ -31,6 +31,10 @@ const LandingPage: Page = ({ state, dispatch }) => {
     dispatch(profileSearchClick(profileSearchValue))
   }, [dispatch, profileSearchValue])
 
+  const onLoginClick = useCallback<ButtonClickHandler>(() => {
+    window.location.href = "/api/auth/authorize"
+  }, [])
+
   return (
     <div className={styles.LandingPageContainer}>
       <header className={styles.HeaderContainer}>
@@ -49,7 +53,10 @@ const LandingPage: Page = ({ state, dispatch }) => {
             </Message>
           }
         />
-        <Button onClick={onSearchClick} title="Search" />
+        <div className={styles.ButtonContainer}>
+          <Button title="Search" onClick={onSearchClick} />
+          <Button title="Login" onClick={onLoginClick} />
+        </div>
       </section>
     </div>
   )

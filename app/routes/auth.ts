@@ -4,13 +4,12 @@ import cookieParser from "cookie-parser"
 import { config } from "dotenv"
 import { randomBytes } from "crypto"
 import Integration from "../spotify/Integration"
-import Queries from "../db/connect"
+import Queries from "../db/queries"
 import { sign } from "jsonwebtoken"
 
 config()
 
 const router = express.Router()
-router.use(cors())
 router.use(cookieParser())
 
 router.get("/callback", async (req, res) => {
@@ -30,19 +29,19 @@ router.get("/callback", async (req, res) => {
   const spotifyUserData = await Integration.getSpotifyPrivateUserProfile(tokenResponse.access_token)
 
   // Check whether user has existing data, if they do update the user, otherwise create a new user
-  const userDataQuery = await Queries.getSpotifyUserData(spotifyUserData.id)
+  const publicSpotifyProfile = await Queries.getUserSpotifyProfile(spotifyUserData.id)
 
-  if (!!userDataQuery.rows) {
-    await Queries.createUserWithSpotifyProfileDateAndTokens(spotifyUserData, tokenResponse)
+  if (!publicSpotifyProfile) {
+    await Queries.createUserWithSpotifyProfileAndSpotifyTokens(spotifyUserData, tokenResponse)
   } else {
-    await Queries.updateUserWithTokens(spotifyUserData, tokenResponse)
+    await Queries.updateUserWithSpotifyProfileAndSpotifyTokens(spotifyUserData, tokenResponse)
   }
 
   // Create access and refresh tokens + update the database with the refresh token
   const accessToken = createAccessToken(spotifyUserData.id)
   const refreshToken = createRefreshToken(spotifyUserData.id)
 
-  await Queries.updateRefreshToken(refreshToken, spotifyUserData.id)
+  await Queries.updateUserRefreshToken(refreshToken, spotifyUserData.id)
 
   res.cookie(process.env.COOKIE_ACCESS_TOKEN, accessToken.accessToken, {
     maxAge: accessToken.expiresIn * 1000,
@@ -54,7 +53,7 @@ router.get("/callback", async (req, res) => {
   })
 
   // Redirect to the users page
-  res.redirect(process.env.REACT_APP_URL + `/${spotifyUserData.id}`)
+  res.redirect(process.env.REACT_APP_URL + `/@${spotifyUserData.id}`)
 })
 
 router.get("/authorize", (req, res) => {
@@ -81,11 +80,10 @@ router.post("/token", async (req, res) => {
   console.log(`/api/auth/token: Refresh access token`)
   const refreshToken = req.cookies[process.env.COOKIE_REFRESH_TOKEN]
 
-  const refreshTokenUserQuery = await Queries.getRefreshTokenUser(refreshToken)
+  const spotifyId = await Queries.getSpotifyIdFromRefreshToken(refreshToken)
 
-  if (refreshToken && !!refreshTokenUserQuery.rows) {
-    const refreshTokenUserSpotifyId = refreshTokenUserQuery.rows[0].spotify_id
-    const tokens = createAccessToken(refreshTokenUserSpotifyId)
+  if (refreshToken && !!spotifyId) {
+    const tokens = createAccessToken(spotifyId)
 
     res.cookie(process.env.COOKIE_ACCESS_TOKEN, tokens.accessToken, {
       maxAge: Number(process.env.JWT_ACCESS_TOKEN_EXPIRY_SECONDS) * 1000,

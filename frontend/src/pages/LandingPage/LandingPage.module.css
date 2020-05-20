@@ -61,3 +61,8 @@
 .SearchInputError {
   margin-left: 16px;
 }
+
+.ButtonContainer {
+  display: flex;
+  flex-direction: row;
+}
