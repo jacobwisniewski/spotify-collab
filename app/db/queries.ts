@@ -5,7 +5,7 @@ import {
   SpotifyPrivateProfileResponse,
   SpotifyPublicProfileResponse,
   SpotifyTokenResponse
-} from "../spotify/Integration"
+} from "../services/SpotifyService"
 import { PublicSpotifyProfileData } from "../spotify"
 import {
   createSpotifyTokensTableQuery,

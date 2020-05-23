@@ -1,8 +1,5 @@
-import {ExpressServer} from "./app/server";
-import express from 'express';
-const app = express();
+import { start } from "./app/server"
 
-const port = Number(process.env.PORT) || 5000;
+const port = Number(process.env.PORT) || 5000
 
-const server = new ExpressServer(app);
-server.start(port);
+start(port)

@@ -1,5 +1,5 @@
 import Queries from "./db/queries"
-import Integration, { SpotifyAccessTokenResponse } from "./spotify/Integration"
+import SpotifyService, { SpotifyAccessTokenResponse } from "./services/SpotifyService"
 import { config } from "dotenv"
 
 config()
@@ -18,7 +18,7 @@ export const getPublicSpotifyUserData = async (spotifyId: string): Promise<Publi
     console.log(`Didn't find ${spotifyId} in database, requesting from Spotify.`)
     const accessToken = await checkForExpiredSpotifyAccessToken(process.env.DEFAULT_SPOTIFY_ID)
     try {
-      const spotifyProfileResponse = await Integration.getSpotifyPublicUserProfile(accessToken, spotifyId)
+      const spotifyProfileResponse = await SpotifyService.getSpotifyPublicUserProfile(accessToken, spotifyId)
       await Queries.createUserWithSpotifyProfile(spotifyProfileResponse)
       spotifyProfile = await Queries.getUserSpotifyProfile(spotifyProfileResponse.id)
     } catch (err) {
@@ -50,7 +50,7 @@ const refreshUsersSpotifyToken = async (spotifyId: string): Promise<SpotifyAcces
   const spotifyTokens = await Queries.getUserSpotifyTokens(spotifyId)
 
   try {
-    const newAccessToken = await Integration.refreshSpotifyToken(spotifyTokens.refresh_token)
+    const newAccessToken = await SpotifyService.refreshSpotifyToken(spotifyTokens.refresh_token)
     await Queries.updateUserWithAccessToken(spotifyId, newAccessToken)
     return Promise.resolve(newAccessToken)
   } catch (err) {

@@ -1,11 +1,7 @@
 import express from "express"
-import cors from "cors"
 import cookieParser from "cookie-parser"
 import { config } from "dotenv"
-import { randomBytes } from "crypto"
-import Integration from "../spotify/Integration"
-import Queries from "../db/queries"
-import { sign } from "jsonwebtoken"
+import UserAuthenticationUsecase from "../usecases/UserAuthenticationUsecase"
 
 config()
 
@@ -14,105 +10,55 @@ router.use(cookieParser())
 
 router.get("/callback", async (req, res) => {
   console.log(`/api/auth/callback: Callback initialized`)
-  const receivedState = req.query.state
+  const receivedState = String(req.query.state)
+  const authorizationCode = String(req.query.code)
   const expectedState = req.cookies[process.env.COOKIE_SPOTIFY_STATE]
 
-  if (receivedState !== expectedState) {
-    res.sendStatus(401)
-    return
-  }
+  const { tokens, spotifyId } = await UserAuthenticationUsecase.createOrUpdateUser(receivedState, expectedState, authorizationCode)
+  const { accessToken, refreshToken } = tokens
 
-  // Get the users spotify tokens and spotify user data
-  const authorizationCode = String(req.query.code)
-
-  const tokenResponse = await Integration.getSpotifyTokens(authorizationCode)
-  const spotifyUserData = await Integration.getSpotifyPrivateUserProfile(tokenResponse.access_token)
-
-  // Check whether user has existing data, if they do update the user, otherwise create a new user
-  const publicSpotifyProfile = await Queries.getUserSpotifyProfile(spotifyUserData.id)
-
-  if (!publicSpotifyProfile) {
-    await Queries.createUserWithSpotifyProfileAndSpotifyTokens(spotifyUserData, tokenResponse)
-  } else {
-    await Queries.updateUserWithSpotifyProfileAndSpotifyTokens(spotifyUserData, tokenResponse)
-  }
-
-  // Create access and refresh tokens + update the database with the refresh token
-  const accessToken = createAccessToken(spotifyUserData.id)
-  const refreshToken = createRefreshToken(spotifyUserData.id)
-
-  await Queries.updateUserRefreshToken(refreshToken, spotifyUserData.id)
-
-  res.cookie(process.env.COOKIE_ACCESS_TOKEN, accessToken.accessToken, {
+  res.cookie(process.env.COOKIE_ACCESS_TOKEN, accessToken.token, {
     maxAge: accessToken.expiresIn * 1000,
     httpOnly: true
   })
-  res.cookie(process.env.COOKIE_REFRESH_TOKEN, refreshToken, {
-    maxAge: 365 * 24 * 60 * 60 * 1000,
+
+  res.cookie(process.env.COOKIE_REFRESH_TOKEN, refreshToken.token, {
+    maxAge: refreshToken.expiresIn,
     httpOnly: true
   })
 
-  // Redirect to the users page
-  res.redirect(process.env.REACT_APP_URL + `/@${spotifyUserData.id}`)
+  res.redirect(process.env.REACT_APP_URL + `/@${spotifyId}`)
 })
 
 router.get("/authorize", (req, res) => {
   console.log(`/api/auth/authorize: Spotify authorize redirect`)
-  const state = randomBytes(10).toString("hex")
+  const { state, url } = UserAuthenticationUsecase.getSpotifyAuthorizeUrl()
+
   res.cookie(process.env.COOKIE_SPOTIFY_STATE, state, {
     maxAge: 900000,
     httpOnly: true
   })
 
-  const redirectUrl =
-    "https://accounts.spotify.com/authorize" +
-    `?client_id=${process.env.SPOTIFY_CLIENT_ID}` +
-    `&response_type=code` +
-    `&redirect_uri=${process.env.SPOTIFY_REDIRECT_URI}` +
-    `&state=${state}` +
-    `&scope=${process.env.SPOTIFY_SCOPE}` +
-    `&show_dialog=false`
-
-  res.redirect(redirectUrl)
+  res.redirect(url)
 })
 
 router.post("/token", async (req, res) => {
   console.log(`/api/auth/token: Refresh access token`)
-  const refreshToken = req.cookies[process.env.COOKIE_REFRESH_TOKEN]
+  const token = req.cookies[process.env.COOKIE_REFRESH_TOKEN]
 
-  const spotifyId = await Queries.getSpotifyIdFromRefreshToken(refreshToken)
+  const { accessToken, refreshToken } = await UserAuthenticationUsecase.refreshAuthorizationTokens(token)
 
-  if (refreshToken && !!spotifyId) {
-    const tokens = createAccessToken(spotifyId)
-
-    res.cookie(process.env.COOKIE_ACCESS_TOKEN, tokens.accessToken, {
-      maxAge: Number(process.env.JWT_ACCESS_TOKEN_EXPIRY_SECONDS) * 1000,
-      httpOnly: true
-    })
-    res.sendStatus(200)
-  } else {
-    res.sendStatus(400)
-  }
-})
-
-interface AccessToken {
-  accessToken: string
-  expiresIn: number
-}
-
-const createAccessToken = (spotifyId: string): AccessToken => {
-  const accessToken = sign({ spotifyId }, process.env.JWT_ACCESS_TOKEN_SECRET_KEY, {
-    expiresIn: Number(process.env.JWT_ACCESS_TOKEN_EXPIRY_SECONDS)
+  res.cookie(process.env.COOKIE_ACCESS_TOKEN, accessToken.token, {
+    maxAge: accessToken.expiresIn * 1000,
+    httpOnly: true
   })
 
-  return {
-    accessToken,
-    expiresIn: Number(process.env.JWT_ACCESS_TOKEN_EXPIRY_SECONDS)
-  }
-}
+  res.cookie(process.env.COOKIE_REFRESH_TOKEN, refreshToken.token, {
+    maxAge: refreshToken.expiresIn,
+    httpOnly: true
+  })
 
-const createRefreshToken = (spotifyId: string): string => {
-  return sign({ spotifyId }, process.env.JWT_REFRESH_TOKEN_SECRET_KEY)
-}
+  res.sendStatus(200)
+})
 
 export default router

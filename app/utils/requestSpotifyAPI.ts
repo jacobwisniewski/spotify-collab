@@ -1,4 +1,4 @@
-import { Integration } from "../spotify/Integration";
+import { SpotifyService } from "../services/SpotifyService"
 
 // const checkForRefresh = async (apiCall: () => Promise<any>)  => {
 //     try {

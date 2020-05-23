@@ -1,27 +1,34 @@
-import express, { Express, Request, Response } from "express"
+import express, { Request, Response, NextFunction } from "express"
 import AuthRoute from "./routes/auth"
 import UsersRoute from "./routes/users"
 import * as path from "path"
 import { main } from "./db/queries"
 
-export class ExpressServer {
-  private app: Express
+const app = express()
 
-  constructor(app: Express) {
-    this.app = app
+app.use(express.static(path.resolve("./") + "/build/frontend"))
 
-    this.app.use(express.static(path.resolve("./") + "/build/frontend"))
+app.use("/api/auth", AuthRoute)
+app.use("/api/users", UsersRoute)
 
-    this.app.use("/api/auth", AuthRoute)
-    this.app.use("/api/users", UsersRoute)
+app.get("*", (req: Request, res: Response) => {
+  res.sendFile(path.resolve("./") + "/build/frontend/index.html")
+})
 
-    this.app.get("*", (req: Request, res: Response) => {
-      res.sendFile(path.resolve("./") + "/build/frontend/index.html")
-    })
-  }
+interface Error {
+  status?: number
+  message?: string
+}
 
-  public start(port: number): void {
-    main()
-    this.app.listen(port, () => console.log(`Server listening on port: ${port}`))
-  }
+app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+  const { status = 500, message = "An error occured." } = error
+  console.log("Error status: ", status)
+  console.log("Message: ", message)
+  res.status(status)
+  res.json({ message })
+})
+
+export function start(port: Number) {
+  main()
+  app.listen(port, () => console.log(`Server listening on port: ${port}`))
 }

@@ -59,14 +59,14 @@ export interface SpotifyPrivateProfileResponse {
   uri: string
 }
 
-export interface Integration {
+export interface SpotifyService {
   getSpotifyTokens(authorizationCode: string): Promise<SpotifyTokenResponse>
   getSpotifyPrivateUserProfile(accessToken: string): Promise<SpotifyPrivateProfileResponse>
   getSpotifyPublicUserProfile(accessCode: string, spotifyId: string): Promise<SpotifyPublicProfileResponse>
   refreshSpotifyToken(refreshToken: string): Promise<SpotifyAccessTokenResponse>
 }
 
-const Integration: Integration = {
+const SpotifyService: SpotifyService = {
   getSpotifyPrivateUserProfile(accessCode: string): Promise<SpotifyPrivateProfileResponse> {
     return fetch(SPOTIFY_API_BASE_URL + "/me", {
       headers: {
@@ -112,4 +112,4 @@ const Integration: Integration = {
     }).then(responseToJson)
   }
 }
-export default Integration
+export default SpotifyService

@@ -2,11 +2,6 @@ import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import { config } from "dotenv"
-import { randomBytes } from "crypto"
-import Integration from "../spotify/Integration"
-import Queries from "../db/queries"
-import { sign } from "jsonwebtoken"
-import { userAuthentication } from "../middleware/authentication"
 import { getPublicSpotifyUserData } from "../spotify"
 
 config()
