@@ -4,4 +4,6 @@ export interface SpotifyProfileResponse {
   profile_picture_url: string
   spotify_profile_url: string
   followers: number
+  email?: string
+  country?: string
 }

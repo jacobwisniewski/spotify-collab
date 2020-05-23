@@ -40,7 +40,7 @@ const UserAuthenticationUsecase: UserAuthenticationUsecase = {
       const tokenResponse = await SpotifyService.getSpotifyTokens(authorizationCode)
       const spotifyUserData = await SpotifyService.getSpotifyPrivateUserProfile(tokenResponse.access_token)
 
-      const publicSpotifyProfile = await Queries.getUserSpotifyProfile(spotifyUserData.id)
+      const publicSpotifyProfile = await Queries.getPublicSpotifyProfile(spotifyUserData.id)
 
       if (!publicSpotifyProfile) {
         await Queries.createUserWithSpotifyProfileAndSpotifyTokens(spotifyUserData, tokenResponse)
@@ -56,7 +56,7 @@ const UserAuthenticationUsecase: UserAuthenticationUsecase = {
         spotifyId: spotifyUserData.id
       }
     } catch (error) {
-      throw createError(500, error.message)
+      throw error
     }
   },
   getSpotifyAuthorizeUrl(): AuthorizeUrlResponse {
@@ -75,21 +75,12 @@ const UserAuthenticationUsecase: UserAuthenticationUsecase = {
     }
   },
   async refreshAuthorizationTokens(refreshToken: string): Promise<AuthenticationTokens> {
-    let spotifyId
-    try {
-      spotifyId = await Queries.getSpotifyIdFromRefreshToken(refreshToken)
-    } catch (error) {
-      throw createError(500, error)
-    }
+    const spotifyId = await Queries.getSpotifyIdFromRefreshToken(refreshToken)
 
     if (!spotifyId) throw createError(400, "Refresh token does not return valid user")
 
     const tokens = createAuthenticationTokens(spotifyId)
-    try {
-      await Queries.updateUserRefreshToken(tokens.refreshToken.token, spotifyId)
-    } catch (error) {
-      throw createError(500, error)
-    }
+    await Queries.updateUserRefreshToken(tokens.refreshToken.token, spotifyId)
 
     return tokens
   }

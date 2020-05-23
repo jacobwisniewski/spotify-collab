@@ -13,11 +13,12 @@ import {
   createUserWithSpotifyProfileAndSpotifyTokensQuery,
   createUserWithSpotifyProfileQuery,
   getUserRefreshTokenQuery,
-  getUserSpotifyProfileQuery,
+  getPublicSpotifyProfileQuery,
   getUserSpotifyTokensQuery,
   updateRefreshTokenQuery,
   updateUserWithAccessTokenQuery,
-  updateUserWithSpotifyProfileAndSpotifyTokensQuery
+  updateUserWithSpotifyProfileAndSpotifyTokensQuery,
+  getPrivateSpotifyProfileQuery
 } from "./queryStrings"
 
 config()
@@ -39,11 +40,19 @@ pool.on("connect", (client: PoolClient) => {
 interface PublicSpotifyProfile {
   spotify_id: string
   display_name: string
-  country: string
-  email: string
   spotify_profile_url: string
   profile_picture_url: string
   followers: number
+}
+
+interface PrivateSpotifyProfile {
+  spotify_id: string
+  display_name: string
+  spotify_profile_url: string
+  profile_picture_url: string
+  followers: number
+  country: string
+  email: string
 }
 
 interface SpotifyTokens {
@@ -59,7 +68,7 @@ interface Queries {
 
   createUserWithSpotifyProfileAndSpotifyTokens(profile: SpotifyPrivateProfileResponse, tokens: SpotifyTokenResponse): Promise<void>
 
-  getUserSpotifyProfile(spotifyId: string): Promise<PublicSpotifyProfile>
+  getPublicSpotifyProfile(spotifyId: string): Promise<PublicSpotifyProfile>
 
   updateUserWithSpotifyProfileAndSpotifyTokens(profile: SpotifyPublicProfileResponse, tokens: SpotifyTokenResponse): Promise<void>
 
@@ -72,11 +81,13 @@ interface Queries {
   updateUserWithAccessToken(spotifyId: string, token: SpotifyAccessTokenResponse): Promise<void>
 
   createUserWithSpotifyProfile(userData: SpotifyPublicProfileResponse): Promise<void>
+
+  getPrivateSpotifyProfile(spotifyId: string): Promise<PrivateSpotifyProfile>
 }
 
 const Queries: Queries = {
   createUserWithSpotifyProfile(userData: SpotifyPublicProfileResponse) {
-    const profilePictureUrl = !!userData.images.length ? `'${userData.images[0].url}'` : null
+    const profilePictureUrl = !!userData.images.length ? userData.images[0].url : null
 
     return query(createUserWithSpotifyProfileQuery, [
       userData.id,
@@ -107,7 +118,7 @@ const Queries: Queries = {
   },
   updateUserWithSpotifyProfileAndSpotifyTokens(profile: SpotifyPublicProfileResponse, tokens: SpotifyTokenResponse) {
     const expiresOn = new Date(Date.now() + tokens.expires_in * 1000)
-    const profilePictureUrl = !!profile.images.length ? `'${profile.images[0].url}'` : null
+    const profilePictureUrl = !!profile.images.length ? profile.images[0].url : null
 
     return query(updateUserWithSpotifyProfileAndSpotifyTokensQuery, [
       profile.display_name,
@@ -135,8 +146,11 @@ const Queries: Queries = {
   getSpotifyIdFromRefreshToken(refreshToken: string) {
     return query<string>(getUserRefreshTokenQuery, [refreshToken]).then(getFirstResult)
   },
-  getUserSpotifyProfile(spotifyId: string) {
-    return query<PublicSpotifyProfile>(getUserSpotifyProfileQuery, [spotifyId]).then(getFirstResult)
+  getPublicSpotifyProfile(spotifyId: string) {
+    return query<PublicSpotifyProfile>(getPublicSpotifyProfileQuery, [spotifyId]).then(getFirstResult)
+  },
+  getPrivateSpotifyProfile(spotifyId: string) {
+    return query<PrivateSpotifyProfile>(getPrivateSpotifyProfileQuery, [spotifyId]).then(getFirstResult)
   },
   createSpotifyTokensTable() {
     return query(createSpotifyTokensTableQuery).then(returnVoid)

@@ -25,7 +25,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   console.log("Error status: ", status)
   console.log("Message: ", message)
   res.status(status)
-  res.json({ message })
+  res.send({ message })
 })
 
 export function start(port: Number) {

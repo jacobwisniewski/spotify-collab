@@ -33,7 +33,13 @@ export const updateUserWithSpotifyProfileAndSpotifyTokensQuery = `
     WHERE spotify_id = $9
 `
 
-export const getUserSpotifyProfileQuery = `
+export const getPublicSpotifyProfileQuery = `
+    SELECT spotify_id, display_name, country, email, spotify_profile_url, profile_picture_url, followers,
+            spotify_account_type
+    FROM users WHERE users.spotify_id = $1
+`
+
+export const getPrivateSpotifyProfileQuery = `
     SELECT spotify_id, display_name, country, email, spotify_profile_url, profile_picture_url, followers,
             spotify_account_type
     FROM users WHERE users.spotify_id = $1

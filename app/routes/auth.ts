@@ -14,20 +14,24 @@ router.get("/callback", async (req, res) => {
   const authorizationCode = String(req.query.code)
   const expectedState = req.cookies[process.env.COOKIE_SPOTIFY_STATE]
 
-  const { tokens, spotifyId } = await UserAuthenticationUsecase.createOrUpdateUser(receivedState, expectedState, authorizationCode)
-  const { accessToken, refreshToken } = tokens
+  try {
+    const { tokens, spotifyId } = await UserAuthenticationUsecase.createOrUpdateUser(receivedState, expectedState, authorizationCode)
+    const { accessToken, refreshToken } = tokens
 
-  res.cookie(process.env.COOKIE_ACCESS_TOKEN, accessToken.token, {
-    maxAge: accessToken.expiresIn * 1000,
-    httpOnly: true
-  })
+    res.cookie(process.env.COOKIE_ACCESS_TOKEN, accessToken.token, {
+      maxAge: accessToken.expiresIn * 1000,
+      httpOnly: true
+    })
 
-  res.cookie(process.env.COOKIE_REFRESH_TOKEN, refreshToken.token, {
-    maxAge: refreshToken.expiresIn,
-    httpOnly: true
-  })
+    res.cookie(process.env.COOKIE_REFRESH_TOKEN, refreshToken.token, {
+      maxAge: refreshToken.expiresIn,
+      httpOnly: true
+    })
 
-  res.redirect(process.env.REACT_APP_URL + `/@${spotifyId}`)
+    res.redirect(process.env.REACT_APP_URL + `/@${spotifyId}`)
+  } catch (error) {
+    throw error
+  }
 })
 
 router.get("/authorize", (req, res) => {
@@ -46,19 +50,22 @@ router.post("/token", async (req, res) => {
   console.log(`/api/auth/token: Refresh access token`)
   const token = req.cookies[process.env.COOKIE_REFRESH_TOKEN]
 
-  const { accessToken, refreshToken } = await UserAuthenticationUsecase.refreshAuthorizationTokens(token)
+  try {
+    const { accessToken, refreshToken } = await UserAuthenticationUsecase.refreshAuthorizationTokens(token)
+    res.cookie(process.env.COOKIE_ACCESS_TOKEN, accessToken.token, {
+      maxAge: accessToken.expiresIn * 1000,
+      httpOnly: true
+    })
 
-  res.cookie(process.env.COOKIE_ACCESS_TOKEN, accessToken.token, {
-    maxAge: accessToken.expiresIn * 1000,
-    httpOnly: true
-  })
+    res.cookie(process.env.COOKIE_REFRESH_TOKEN, refreshToken.token, {
+      maxAge: refreshToken.expiresIn,
+      httpOnly: true
+    })
 
-  res.cookie(process.env.COOKIE_REFRESH_TOKEN, refreshToken.token, {
-    maxAge: refreshToken.expiresIn,
-    httpOnly: true
-  })
-
-  res.sendStatus(200)
+    res.sendStatus(200)
+  } catch (error) {
+    throw error
+  }
 })
 
 export default router

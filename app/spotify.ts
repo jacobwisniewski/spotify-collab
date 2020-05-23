@@ -1,6 +1,7 @@
 import Queries from "./db/queries"
 import SpotifyService, { SpotifyAccessTokenResponse } from "./services/SpotifyService"
 import { config } from "dotenv"
+import createError from "http-errors"
 
 config()
 
@@ -13,20 +14,20 @@ export interface PublicSpotifyProfileData {
 }
 
 export const getPublicSpotifyUserData = async (spotifyId: string): Promise<PublicSpotifyProfileData> => {
-  let spotifyProfile = await Queries.getUserSpotifyProfile(spotifyId)
+  let spotifyProfile = await Queries.getPublicSpotifyProfile(spotifyId)
   if (!spotifyProfile) {
     console.log(`Didn't find ${spotifyId} in database, requesting from Spotify.`)
     const accessToken = await checkForExpiredSpotifyAccessToken(process.env.DEFAULT_SPOTIFY_ID)
     try {
       const spotifyProfileResponse = await SpotifyService.getSpotifyPublicUserProfile(accessToken, spotifyId)
       await Queries.createUserWithSpotifyProfile(spotifyProfileResponse)
-      spotifyProfile = await Queries.getUserSpotifyProfile(spotifyProfileResponse.id)
+      spotifyProfile = await Queries.getPublicSpotifyProfile(spotifyProfileResponse.id)
     } catch (err) {
-      return Promise.reject(err)
+      throw createError("User doesn't exist with that Spotify id")
     }
   }
 
-  return Promise.resolve(spotifyProfile)
+  return spotifyProfile
 }
 
 const checkForExpiredSpotifyAccessToken = async (spotifyId: string): Promise<string> => {
