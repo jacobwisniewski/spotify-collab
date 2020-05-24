@@ -41,7 +41,7 @@ const ProfilePageError: FunctionComponent<ProfilePageErrorProps> = ({ onBackClic
 }
 
 const ProfilePage: Page = ({ integration, state, dispatch, queryParams }) => {
-  const { spotify_id, display_name, profile_picture_url, spotify_profile_url } = state.spotifyProfile
+  const { spotify_id, display_name, profile_picture_url, spotify_profile_url, followers } = state.spotifyProfile
   const { spotifyId } = queryParams
   const isInitial = state.spotifyProfileStatus === SpotifyProfileStatus.INITIAL
   const isLoading = state.spotifyProfileStatus === SpotifyProfileStatus.LOADING
@@ -73,14 +73,15 @@ const ProfilePage: Page = ({ integration, state, dispatch, queryParams }) => {
         <ProfilePageError onBackClick={navigateToLandingPageClick} />
       ) : (
         <div className={styles.ProfileContainer}>
-          <img className={styles.ProfilePicture} src={profilePicture} alt={"Spotify Profile"} />
-          <div className={styles.InfoContainer}>
-            <div className={styles.HeaderContainer}>
-              <h2 className={styles.Header}>{display_name}</h2>
-              <h3 className={styles.Subtitle}>{spotify_id}</h3>
-              <div className={styles.Button}>
-                <Button onClick={onSpotifyClick} title={"Open to Spotify"} />
-              </div>
+          <div className={styles.HeaderContainer}>
+            <div className={styles.HeaderBackground} />
+            <img className={styles.ProfilePicture} src={profilePicture!} alt={"Spotify Profile"} />
+            <h2 className={styles.Header}>{display_name}</h2>
+            <h3 className={styles.Subtitle}>{spotify_id}</h3>
+            <hr className={styles.HeaderRule} />
+            <div className={styles.InfoContainer}>
+              <Button onClick={onSpotifyClick} title={"Open to Spotify"} />
+              <h3 className={styles.Followers}>{!!followers ? `Followers: ${followers}` : "No followers 😢"}</h3>
             </div>
           </div>
         </div>

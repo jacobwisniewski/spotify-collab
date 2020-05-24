@@ -28,7 +28,11 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   res.send({ message })
 })
 
-export function start(port: Number) {
-  main()
+export async function start(port: Number) {
+  try {
+    await main()
+  } catch (error) {
+    throw error
+  }
   app.listen(port, () => console.log(`Server listening on port: ${port}`))
 }

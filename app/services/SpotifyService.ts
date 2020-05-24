@@ -1,5 +1,6 @@
 import responseToJson from "../utils/responseToJson"
 import fetch from "node-fetch"
+import { SpotifyUserTopTracksResponse } from "../models/SpotifyUserTopTracksResponse"
 
 const SPOTIFY_AUTH_BASE_URL = "https://accounts.spotify.com"
 const SPOTIFY_API_BASE_URL = "https://api.spotify.com/v1"
@@ -59,11 +60,18 @@ export interface SpotifyPrivateProfileResponse {
   uri: string
 }
 
+export enum TimeRange {
+  SHORT_TERM = "short_term",
+  MEDIUM_TERM = "medium_term",
+  LONG_TERM = "long_term"
+}
+
 export interface SpotifyService {
   getSpotifyTokens(authorizationCode: string): Promise<SpotifyTokenResponse>
   getSpotifyPrivateUserProfile(accessToken: string): Promise<SpotifyPrivateProfileResponse>
   getSpotifyPublicUserProfile(accessCode: string, spotifyId: string): Promise<SpotifyPublicProfileResponse>
   refreshSpotifyToken(refreshToken: string): Promise<SpotifyAccessTokenResponse>
+  getUserTopTracks(accessCode: string, timeRange: TimeRange, limit: number, offset: number): Promise<SpotifyUserTopTracksResponse>
 }
 
 const SpotifyService: SpotifyService = {
@@ -109,6 +117,14 @@ const SpotifyService: SpotifyService = {
         client_id: process.env.SPOTIFY_CLIENT_ID,
         client_secret: process.env.SPOTIFY_CLIENT_SECRET
       })
+    }).then(responseToJson)
+  },
+  getUserTopTracks(accessCode: string, timeRange: TimeRange, limit: number, offset: number): Promise<SpotifyUserTopTracksResponse> {
+    return fetch(SPOTIFY_API_BASE_URL + `/me/top/tracks?time_range=${timeRange}&limit=${limit}&offset=${offset}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessCode}`
+      }
     }).then(responseToJson)
   }
 }

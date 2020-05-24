@@ -14,9 +14,9 @@ const Header: FunctionComponent<HeaderProps> = ({ onLogoClick }) => {
 
   return (
     <header className={styles.HeaderContainer}>
-      <h3 className={styles.Logo} onClick={onClick}>
+      <h2 className={styles.Logo} onClick={onClick}>
         Collab.
-      </h3>
+      </h2>
     </header>
   )
 }

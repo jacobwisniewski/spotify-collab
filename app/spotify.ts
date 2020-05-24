@@ -1,5 +1,5 @@
-import Queries from "./db/queries"
-import SpotifyService, { SpotifyAccessTokenResponse } from "./services/SpotifyService"
+import Queries, { SpotifyTrack } from "./db/queries"
+import SpotifyService, { SpotifyAccessTokenResponse, TimeRange } from "./services/SpotifyService"
 import { config } from "dotenv"
 import createError from "http-errors"
 
@@ -28,6 +28,24 @@ export const getPublicSpotifyUserData = async (spotifyId: string): Promise<Publi
   }
 
   return spotifyProfile
+}
+
+export const getUserTopTracks = async (spotifyId: string): Promise<SpotifyTrack[]> => {
+  try {
+    const accessToken = await checkForExpiredSpotifyAccessToken(spotifyId)
+    const topTracksResponse = await SpotifyService.getUserTopTracks(accessToken, TimeRange.MEDIUM_TERM, 25, 0)
+    const topTracks = topTracksResponse.items.map(({ id, name, external_urls, album, artists }) => ({
+      id,
+      name,
+      url: external_urls.spotify,
+      artists: artists.map(({ id, name, external_urls }) => ({ id, name, url: external_urls.spotify })),
+      album: { id: album.id, name: album.name, image: album.images[0].url, url: external_urls.spotify }
+    }))
+    await Queries.addUserTopTracks(spotifyId, TimeRange.MEDIUM_TERM, topTracks)
+    return topTracks
+  } catch (error) {
+    throw error
+  }
 }
 
 const checkForExpiredSpotifyAccessToken = async (spotifyId: string): Promise<string> => {

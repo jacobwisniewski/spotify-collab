@@ -4,7 +4,8 @@ import {
   SpotifyAccessTokenResponse,
   SpotifyPrivateProfileResponse,
   SpotifyPublicProfileResponse,
-  SpotifyTokenResponse
+  SpotifyTokenResponse,
+  TimeRange
 } from "../services/SpotifyService"
 import { PublicSpotifyProfileData } from "../spotify"
 import {
@@ -18,8 +19,15 @@ import {
   updateRefreshTokenQuery,
   updateUserWithAccessTokenQuery,
   updateUserWithSpotifyProfileAndSpotifyTokensQuery,
-  getPrivateSpotifyProfileQuery
+  getPrivateSpotifyProfileQuery,
+  createTopTracksTableQuery,
+  createTracksTableQuery,
+  createAlbumTableQuery,
+  createArtistTableQuery,
+  createTrackArtistTableQuery,
+  addUserTopTracksQuery
 } from "./queryStrings"
+import format from "pg-format"
 
 config()
 
@@ -61,10 +69,41 @@ interface SpotifyTokens {
   expires_on: string
 }
 
+interface SpotifyAlbum {
+  id: string
+  name: string
+  image: string
+  url: string
+}
+
+interface SpotifyArtists {
+  id: string
+  name: string
+  url: string
+}
+
+export interface SpotifyTrack {
+  id: string
+  name: string
+  url: string
+  album: SpotifyAlbum
+  artists: SpotifyArtists[]
+}
+
 interface Queries {
   createSpotifyTokensTable(): Promise<void>
 
   createUsersTable(): Promise<void>
+
+  createTopTracksTable(): Promise<void>
+
+  createTracksTable(): Promise<void>
+
+  createArtistsTable(): Promise<void>
+
+  createAlbumsTable(): Promise<void>
+
+  createTrackArtistTable(): Promise<void>
 
   createUserWithSpotifyProfileAndSpotifyTokens(profile: SpotifyPrivateProfileResponse, tokens: SpotifyTokenResponse): Promise<void>
 
@@ -83,6 +122,8 @@ interface Queries {
   createUserWithSpotifyProfile(userData: SpotifyPublicProfileResponse): Promise<void>
 
   getPrivateSpotifyProfile(spotifyId: string): Promise<PrivateSpotifyProfile>
+
+  addUserTopTracks(spotifyId: string, timeRange: TimeRange, userTopTracks: SpotifyTrack[]): Promise<void>
 }
 
 const Queries: Queries = {
@@ -132,6 +173,18 @@ const Queries: Queries = {
       profile.id
     ]).then(returnVoid)
   },
+  addUserTopTracks(spotifyId: string, timeRange: TimeRange, userTopTracks: SpotifyTrack[]): Promise<void> {
+    const topTracks = userTopTracks.map(({ id }, index) => [spotifyId, id, timeRange, index])
+    const tracks = userTopTracks.map(({ id, name, url }) => [id, name, url])
+    const artists = userTopTracks.reduce((prevArr, { artists }) => prevArr.concat(artists), []).map(({ id, name, url }) => [id, name, url])
+    const albums = userTopTracks.map(({ album }) => album).map(({ id, name, image, url }) => [id, name, image, url])
+    const trackArtist = userTopTracks
+      .reduce((prevArr, { id, artists }) => prevArr.concat(artists.map((artist) => ({ ...artist, track_id: id }))), [])
+      .map(({ id, track_id }) => [track_id, id])
+
+    const queryString = format(addUserTopTracksQuery, topTracks, tracks, artists, albums, trackArtist)
+    return query(queryString).then(returnVoid)
+  },
   updateUserWithAccessToken(spotifyId: string, token: SpotifyAccessTokenResponse) {
     const expiresOn = new Date(Date.now() + token.expires_in * 1000)
 
@@ -157,6 +210,21 @@ const Queries: Queries = {
   },
   createUsersTable() {
     return query(createUsersTableQuery).then(returnVoid)
+  },
+  createTopTracksTable(): Promise<void> {
+    return query(createTopTracksTableQuery).then(returnVoid)
+  },
+  createTracksTable(): Promise<void> {
+    return query(createTracksTableQuery).then(returnVoid)
+  },
+  createAlbumsTable(): Promise<void> {
+    return query(createAlbumTableQuery).then(returnVoid)
+  },
+  createArtistsTable(): Promise<void> {
+    return query(createArtistTableQuery).then(returnVoid)
+  },
+  createTrackArtistTable(): Promise<void> {
+    return query(createTrackArtistTableQuery).then(returnVoid)
   }
 }
 
@@ -176,7 +244,17 @@ function returnVoid() {
 }
 
 export const main = async () => {
-  Queries.createUsersTable().then(() => Queries.createSpotifyTokensTable())
+  try {
+    await Queries.createTrackArtistTable()
+    await Queries.createArtistsTable()
+    await Queries.createAlbumsTable()
+    await Queries.createTracksTable()
+    await Queries.createTopTracksTable()
+    await Queries.createUsersTable()
+    await Queries.createSpotifyTokensTable()
+  } catch (error) {
+    throw error
+  }
 }
 
 export default Queries

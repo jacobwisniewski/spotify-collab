@@ -1,16 +1,12 @@
 .ProfilePageContainer {
   width: 100%;
   height: 100%;
-
-  background: linear-gradient(50deg, var(--brand-blue-primary), var(--brand-blue-secondary));
+  background-color: var(--background-dark);
 }
 
 .ProfileContainer {
-  width: 800px;
-  margin: var(--spacing-vertical-large) auto 0;
-
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .LoadingContainer,
@@ -23,20 +19,34 @@
   margin-top: var(--spacing-vertical-xxx-large);
 }
 
+.HeaderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(180deg, var(--background-light), var(--background-medium));
+
+  padding-bottom: 20px;
+}
+
+.HeaderBackground {
+  height: 200px;
+  width: 100%;
+  background: linear-gradient(50deg, var(--brand-blue-primary), var(--brand-blue-secondary));
+}
+
 .ProfilePicture {
   width: 250px;
   height: 250px;
 
+  position: relative;
+  top: -180px;
+  margin-bottom: -165px;
+  z-index: 2;
+
+  background: var(--brand-purple-secondary);
+
   border: 3px solid white;
   border-radius: 24px;
-}
-
-.InfoContainer {
-  margin-top: var(--spacing-vertical-x-small);
-  margin-left: var(--spacing-horizontal-small);
-}
-
-.HeaderContainer {
 }
 
 .Header {
@@ -47,6 +57,30 @@
   color: var(--text-color-faint);
 }
 
-.Button {
-  margin-top: 10px;
+.Followers {
+  font-weight: var(--font-weight-bold);
+}
+
+.HeaderRule {
+  width: 90%;
+  border: 1px solid var(--background-light);
+  max-width: 750px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.InfoContainer {
+  display: flex;
+  width: 90%;
+  max-width: 750px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .HeaderBackground {
+    border-radius: 0 0 24px 24px;
+    max-width: 750px;
+  }
 }

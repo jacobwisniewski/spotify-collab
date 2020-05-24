@@ -1,4 +1,6 @@
 :root {
+  font-size: 62.5%;
+
   /*Brand*/
   --brand-blue-primary: #84ceeb;
   --brand-blue-primary-dark: #5ab9ea;
@@ -38,6 +40,11 @@
 
   /*Special text colors*/
   --text-color-error: red;
+
+  /*Background colours*/
+  --background-dark: #18191a;
+  --background-medium: #242526;
+  --background-light: #3a3b3c;
 }
 
 /** {*/
@@ -67,21 +74,27 @@ h3 {
 }
 
 h1 {
-  font-size: 60px;
-  line-height: 64px;
+  font-size: 6rem;
+  line-height: 6.5rem;
   font-weight: var(--font-weight-extra-bold);
 }
 
 h2 {
-  font-size: 40px;
-  line-height: 44px;
+  font-size: 3rem;
+  line-height: 3.5rem;
   font-weight: var(--font-weight-bold);
 }
 
 h3 {
-  font-size: 25px;
-  line-height: 25px;
-  font-weight: var(--font-weight-bold);
+  font-size: 1.8rem;
+  line-height: 2rem;
+  font-weight: var(--font-weight-regular);
+}
+
+h4 {
+  font-size: 2rem;
+  line-height: 2.2rem;
+  font-weight: var(--font-weight-regular);
 }
 
 p {
