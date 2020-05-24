@@ -4,7 +4,5 @@ export interface SpotifyProfileResponse {
   spotify_profile_url: string
   followers: number
   profile_picture_url: null | string
-  email?: string
-  country?: string
-  spotify_account_type?: string
+  extended_data: boolean
 }

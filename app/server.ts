@@ -20,12 +20,16 @@ interface Error {
   message?: string
 }
 
-app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
-  const { status = 500, message = "An error occured." } = error
-  console.log("Error status: ", status)
-  console.log("Message: ", message)
-  res.status(status)
-  res.send({ message })
+app.use(async (error: Error, req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { status = 500, message = "An error occured." } = error
+    console.log("Error status: ", status)
+    console.log("Message: ", message)
+    res.status(status)
+    res.send({ status, message })
+  } catch (error) {
+    next(error)
+  }
 })
 
 export async function start(port: Number) {

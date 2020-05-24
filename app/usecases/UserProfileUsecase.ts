@@ -1,23 +1,35 @@
-import { accessTokenToSpotifyId } from "../utils/accessTokenToSpotifyId"
 import { getPublicSpotifyUserData, getUserTopTracks } from "../spotify"
-import Queries from "../db/queries"
 import { SpotifyProfileResponse } from "../models/SpotifyProfileResponse"
+import { TimeRange } from "../services/SpotifyService"
+import createHttpError from "http-errors"
+import Queries from "../db/queries"
+
+interface SpotifyUserTopTracksResponse {}
 
 interface UserProfileUsecase {
-  getSpotifyProfile(accessToken: string, spotifyId: string): Promise<SpotifyProfileResponse>
+  getSpotifyProfile(spotifyId: string): Promise<SpotifyProfileResponse>
+  getUserTopTracks(spotifyId: string, timeRange: string): Promise<SpotifyUserTopTracksResponse>
 }
 
 const UserProfileUsecase: UserProfileUsecase = {
-  async getSpotifyProfile(accessToken: string, spotifyId: string): Promise<SpotifyProfileResponse> {
+  async getSpotifyProfile(spotifyId: string): Promise<SpotifyProfileResponse> {
     try {
-      let spotifyProfile
-      if (accessToken) {
-        const loggedInSpotifyId = accessTokenToSpotifyId(accessToken)
-        if (loggedInSpotifyId === spotifyId) {
-          spotifyProfile = await Queries.getPrivateSpotifyProfile(spotifyId)
-        }
+      const spotifyTokens = await Queries.getUserSpotifyTokens(spotifyId)
+      const spotifyProfile = await getPublicSpotifyUserData(spotifyId)
+      return {
+        ...spotifyProfile,
+        extended_data: !!spotifyTokens
       }
-      return await getPublicSpotifyUserData(spotifyId)
+    } catch (error) {
+      throw error
+    }
+  },
+  async getUserTopTracks(spotifyId: string, timeRange: string): Promise<SpotifyUserTopTracksResponse> {
+    if (!Object.values(TimeRange).includes(timeRange as TimeRange)) {
+      throw createHttpError(400, "Time range not a valid choice")
+    }
+    try {
+      return await getUserTopTracks(spotifyId, timeRange as TimeRange)
     } catch (error) {
       throw error
     }

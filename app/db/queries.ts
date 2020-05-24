@@ -69,14 +69,14 @@ interface SpotifyTokens {
   expires_on: string
 }
 
-interface SpotifyAlbum {
+export interface SpotifyAlbum {
   id: string
   name: string
   image: string
   url: string
 }
 
-interface SpotifyArtists {
+export interface SpotifyArtist {
   id: string
   name: string
   url: string
@@ -87,7 +87,7 @@ export interface SpotifyTrack {
   name: string
   url: string
   album: SpotifyAlbum
-  artists: SpotifyArtists[]
+  artists: SpotifyArtist[]
 }
 
 interface Queries {

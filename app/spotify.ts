@@ -17,23 +17,27 @@ export const getPublicSpotifyUserData = async (spotifyId: string): Promise<Publi
   let spotifyProfile = await Queries.getPublicSpotifyProfile(spotifyId)
   if (!spotifyProfile) {
     console.log(`Didn't find ${spotifyId} in database, requesting from Spotify.`)
-    const accessToken = await checkForExpiredSpotifyAccessToken(process.env.DEFAULT_SPOTIFY_ID)
     try {
+      const accessToken = await checkForExpiredSpotifyAccessToken(process.env.DEFAULT_SPOTIFY_ID)
       const spotifyProfileResponse = await SpotifyService.getSpotifyPublicUserProfile(accessToken, spotifyId)
       await Queries.createUserWithSpotifyProfile(spotifyProfileResponse)
       spotifyProfile = await Queries.getPublicSpotifyProfile(spotifyProfileResponse.id)
-    } catch (err) {
-      throw createError("User doesn't exist with that Spotify id")
+    } catch (error) {
+      throw error
+    }
+
+    if (!spotifyProfile) {
+      throw createError(400, "User doesn't exist with that Spotify id")
     }
   }
 
   return spotifyProfile
 }
 
-export const getUserTopTracks = async (spotifyId: string): Promise<SpotifyTrack[]> => {
+export const getUserTopTracks = async (spotifyId: string, timeRange: TimeRange): Promise<SpotifyTrack[]> => {
   try {
     const accessToken = await checkForExpiredSpotifyAccessToken(spotifyId)
-    const topTracksResponse = await SpotifyService.getUserTopTracks(accessToken, TimeRange.MEDIUM_TERM, 25, 0)
+    const topTracksResponse = await SpotifyService.getUserTopTracks(accessToken, timeRange, 25, 0)
     const topTracks = topTracksResponse.items.map(({ id, name, external_urls, album, artists }) => ({
       id,
       name,
@@ -50,16 +54,22 @@ export const getUserTopTracks = async (spotifyId: string): Promise<SpotifyTrack[
 
 const checkForExpiredSpotifyAccessToken = async (spotifyId: string): Promise<string> => {
   console.log(`Getting Spotify access token for ${spotifyId}.`)
-  const spotifyTokens = await Queries.getUserSpotifyTokens(spotifyId)
-
   let accessToken
-  if (new Date(spotifyTokens.expires_on).getTime() - Date.now() <= 5 * 1000) {
-    const newAccessTokens = await refreshUsersSpotifyToken(spotifyId)
-    accessToken = newAccessTokens.access_token
-  } else {
-    accessToken = spotifyTokens.access_token
-  }
+  try {
+    const spotifyTokens = await Queries.getUserSpotifyTokens(spotifyId)
+    if (!spotifyTokens) {
+      throw createError(400, "That user has not signed up before")
+    }
 
+    if (new Date(spotifyTokens.expires_on).getTime() - Date.now() <= 5 * 1000) {
+      const newAccessTokens = await refreshUsersSpotifyToken(spotifyId)
+      accessToken = newAccessTokens.access_token
+    } else {
+      accessToken = spotifyTokens.access_token
+    }
+  } catch (error) {
+    throw error
+  }
   console.log(`Successfully gotten Spotify access token: ${accessToken}.`)
   return accessToken
 }

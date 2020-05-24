@@ -8,7 +8,7 @@ config()
 const router = express.Router()
 router.use(cookieParser())
 
-router.get("/callback", async (req, res) => {
+router.get("/callback", async (req, res, next) => {
   console.log(`/api/auth/callback: Callback initialized`)
   const receivedState = String(req.query.state)
   const authorizationCode = String(req.query.code)
@@ -30,11 +30,11 @@ router.get("/callback", async (req, res) => {
 
     res.redirect(process.env.REACT_APP_URL + `/@${spotifyId}`)
   } catch (error) {
-    throw error
+    next(error)
   }
 })
 
-router.get("/authorize", (req, res) => {
+router.get("/authorize", (req, res, next) => {
   console.log(`/api/auth/authorize: Spotify authorize redirect`)
   const { state, url } = UserAuthenticationUsecase.getSpotifyAuthorizeUrl()
 
@@ -46,7 +46,7 @@ router.get("/authorize", (req, res) => {
   res.redirect(url)
 })
 
-router.post("/token", async (req, res) => {
+router.post("/token", async (req, res, next) => {
   console.log(`/api/auth/token: Refresh access token`)
   const token = req.cookies[process.env.COOKIE_REFRESH_TOKEN]
 
@@ -64,7 +64,7 @@ router.post("/token", async (req, res) => {
 
     res.sendStatus(200)
   } catch (error) {
-    throw error
+    next(error)
   }
 })
 
