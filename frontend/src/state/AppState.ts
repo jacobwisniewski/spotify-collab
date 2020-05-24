@@ -36,7 +36,7 @@ const AppState: AppState = {
   spotifyTopTracks: [],
   spotifyTopTracksStatus: IntegrationStatus.INITIAL,
   spotifyTopTracksError: undefined,
-  timeRange: TimeRange.SHORT_TERM,
+  timeRange: TimeRange.MEDIUM_TERM,
   spotifyProfileStatus: IntegrationStatus.INITIAL,
   spotifyProfileError: undefined,
   profileSearchValue: "",
