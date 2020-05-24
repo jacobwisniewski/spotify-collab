@@ -18,21 +18,6 @@ export const updateRefreshTokenQuery = `
 export const getUserRefreshTokenQuery = `
     SELECT spotify_id FROM users WHERE users.refresh_token = $1
 `
-
-export const updateUserWithSpotifyProfileAndSpotifyTokensQuery = `
-    WITH users_update AS (
-        UPDATE users
-        SET display_name = $1, spotify_profile_url = $2, profile_picture_url = $3, followers = $4 
-        WHERE spotify_id = $5
-        RETURNING spotify_id
-    )
-    UPDATE spotify_tokens
-    SET access_token = $6,
-        refresh_token = $7,
-        expires_on = $8
-    WHERE spotify_id = $9
-`
-
 export const getPublicSpotifyProfileQuery = `
     SELECT spotify_id, display_name, spotify_profile_url, profile_picture_url, followers
     FROM users WHERE users.spotify_id = $1
@@ -116,15 +101,25 @@ export const createArtistTableQuery = `
     )
 `
 
-export const createUserWithSpotifyProfileAndSpotifyTokensQuery = `
+export const addUserWithSpotifyProfileAndSpotifyTokensQuery = `
     WITH created_user AS (
         INSERT INTO users (spotify_id, display_name, country, email, profile_picture_url, spotify_profile_url,
                            followers, spotify_account_type)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        RETURNING *
+        ON conflict (spotify_id) DO UPDATE
+        SET display_name = EXCLUDED.display_name,
+            country = EXCLUDED.country,
+            email = EXCLUDED.email,
+            profile_picture_url = EXCLUDED.profile_picture_url,
+            followers = EXCLUDED.followers,
+            spotify_account_type = EXCLUDED.spotify_account_type
     )
     INSERT INTO spotify_tokens (spotify_id, access_token, refresh_token, expires_on)
-    VALUES ($9, $10, $11, $12)  
+    VALUES ($9, $10, $11, $12)
+    ON conflict (spotify_id) DO UPDATE
+    SET access_token = EXCLUDED.access_token,
+        refresh_token = EXCLUDED.refresh_token,
+        expires_on = EXCLUDED.expires_on  
 `
 
 export const addUserTopTracksQuery = `

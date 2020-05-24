@@ -40,13 +40,7 @@ const UserAuthenticationUsecase: UserAuthenticationUsecase = {
       const tokenResponse = await SpotifyService.getSpotifyTokens(authorizationCode)
       const spotifyUserData = await SpotifyService.getSpotifyPrivateUserProfile(tokenResponse.access_token)
 
-      const publicSpotifyProfile = await Queries.getPublicSpotifyProfile(spotifyUserData.id)
-
-      if (!publicSpotifyProfile) {
-        await Queries.createUserWithSpotifyProfileAndSpotifyTokens(spotifyUserData, tokenResponse)
-      } else {
-        await Queries.updateUserWithSpotifyProfileAndSpotifyTokens(spotifyUserData, tokenResponse)
-      }
+      await Queries.addUserWithSpotifyProfileAndSpotifyTokens(spotifyUserData, tokenResponse)
 
       const authenticationTokens = createAuthenticationTokens(spotifyUserData.id)
       await Queries.updateUserRefreshToken(authenticationTokens.refreshToken.token, spotifyUserData.id)

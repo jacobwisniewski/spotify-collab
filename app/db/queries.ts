@@ -7,18 +7,16 @@ import {
   SpotifyTokenResponse,
   TimeRange
 } from "../services/SpotifyService"
-import { PublicSpotifyProfileData } from "../spotify"
 import {
   createSpotifyTokensTableQuery,
   createUsersTableQuery,
-  createUserWithSpotifyProfileAndSpotifyTokensQuery,
+  addUserWithSpotifyProfileAndSpotifyTokensQuery,
   createUserWithSpotifyProfileQuery,
   getUserRefreshTokenQuery,
   getPublicSpotifyProfileQuery,
   getUserSpotifyTokensQuery,
   updateRefreshTokenQuery,
   updateUserWithAccessTokenQuery,
-  updateUserWithSpotifyProfileAndSpotifyTokensQuery,
   getPrivateSpotifyProfileQuery,
   createTopTracksTableQuery,
   createTracksTableQuery,
@@ -105,11 +103,9 @@ interface Queries {
 
   createTrackArtistTable(): Promise<void>
 
-  createUserWithSpotifyProfileAndSpotifyTokens(profile: SpotifyPrivateProfileResponse, tokens: SpotifyTokenResponse): Promise<void>
+  addUserWithSpotifyProfileAndSpotifyTokens(profile: SpotifyPrivateProfileResponse, tokens: SpotifyTokenResponse): Promise<void>
 
   getPublicSpotifyProfile(spotifyId: string): Promise<PublicSpotifyProfile>
-
-  updateUserWithSpotifyProfileAndSpotifyTokens(profile: SpotifyPublicProfileResponse, tokens: SpotifyTokenResponse): Promise<void>
 
   getSpotifyIdFromRefreshToken(refreshToken: string): Promise<string>
 
@@ -138,11 +134,11 @@ const Queries: Queries = {
       userData.followers.total
     ]).then(returnVoid)
   },
-  createUserWithSpotifyProfileAndSpotifyTokens(profile: SpotifyPrivateProfileResponse, token: SpotifyTokenResponse) {
+  addUserWithSpotifyProfileAndSpotifyTokens(profile: SpotifyPrivateProfileResponse, token: SpotifyTokenResponse) {
     const expiresOn = new Date(Date.now() + token.expires_in * 1000)
     const profilePictureUrl = !!profile.images.length ? profile.images[0].url : null
 
-    return query(createUserWithSpotifyProfileAndSpotifyTokensQuery, [
+    return query(addUserWithSpotifyProfileAndSpotifyTokensQuery, [
       profile.id,
       profile.display_name,
       profile.country,
@@ -155,22 +151,6 @@ const Queries: Queries = {
       token.access_token,
       token.refresh_token,
       expiresOn
-    ]).then(returnVoid)
-  },
-  updateUserWithSpotifyProfileAndSpotifyTokens(profile: SpotifyPublicProfileResponse, tokens: SpotifyTokenResponse) {
-    const expiresOn = new Date(Date.now() + tokens.expires_in * 1000)
-    const profilePictureUrl = !!profile.images.length ? profile.images[0].url : null
-
-    return query(updateUserWithSpotifyProfileAndSpotifyTokensQuery, [
-      profile.display_name,
-      profile.external_urls.spotify,
-      profilePictureUrl,
-      profile.followers.total,
-      profile.id,
-      tokens.access_token,
-      tokens.refresh_token,
-      expiresOn,
-      profile.id
     ]).then(returnVoid)
   },
   addUserTopTracks(spotifyId: string, timeRange: TimeRange, userTopTracks: SpotifyTrack[]): Promise<void> {
