@@ -4,6 +4,8 @@ import { AppEffectContext } from "../effects/AppEffect"
 import userProfilePageLoading from "../effects/userProfilePageLoading"
 import { SpotifyProfileResponse } from "../models/SpotifyProfileResponse"
 import profileSearchClickEffect from "../effects/profileSearchClickEffect"
+import spotifyUserTopTracksLoadingEffect from "../effects/spotifyUserTopTracksLoadingEffect"
+import { SpotifyUserTopTracksResponse } from "../models/SpotifyUserTopTracksResponse"
 
 export interface Action<T, P> extends ActionWithEffects<AppState, AppAction, AppEffectContext> {
   type: T
@@ -26,6 +28,25 @@ export const spotifyProfileSuccess = (spotifyProfile: SpotifyProfileResponse): S
 export type SpotifyProfileErrorAction = Action<"SPOTIFY_PROFILE_ERROR", Error>
 export const spotifyProfileError = (error: Error): SpotifyProfileErrorAction => ({
   type: "SPOTIFY_PROFILE_ERROR",
+  payload: error
+})
+
+export type SpotifyUserTopTracksLoadingAction = Action<"SPOTIFY_USER_TOP_TRACKS_LOADING", string>
+export const spotifyUserTopTracksLoading = (spotifyId: string): SpotifyUserTopTracksLoadingAction => ({
+  type: "SPOTIFY_USER_TOP_TRACKS_LOADING",
+  payload: spotifyId,
+  effects: spotifyUserTopTracksLoadingEffect
+})
+
+export type SpotifyUserTopTracksSuccessAction = Action<"SPOTIFY_USER_TOP_TRACKS_SUCCESS", SpotifyUserTopTracksResponse>
+export const spotifyUserTopTracksSuccess = (spotifyUserTopTracks: SpotifyUserTopTracksResponse): SpotifyUserTopTracksSuccessAction => ({
+  type: "SPOTIFY_USER_TOP_TRACKS_SUCCESS",
+  payload: spotifyUserTopTracks
+})
+
+export type SpotifyUserTopTracksErrorAction = Action<"SPOTIFY_USER_TOP_TRACKS_ERROR", Error>
+export const spotifyUserTopTracksError = (error: Error): SpotifyUserTopTracksErrorAction => ({
+  type: "SPOTIFY_USER_TOP_TRACKS_ERROR",
   payload: error
 })
 
@@ -55,3 +76,6 @@ export type AppAction =
   | ProfileSearchChangeAction
   | ProfileSearchClickAction
   | NavigateToLandingPageAction
+  | SpotifyUserTopTracksLoadingAction
+  | SpotifyUserTopTracksSuccessAction
+  | SpotifyUserTopTracksErrorAction

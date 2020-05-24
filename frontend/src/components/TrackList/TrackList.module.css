@@ -1,0 +1,40 @@
+.TrackContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.Order {
+  color: var(--text-color-white);
+  text-align: center;
+  width: 30px;
+  font-size: 1.5em;
+  font-weight: var(--font-weight-bold);
+  margin-right: 10px;
+}
+
+.AlbumCover {
+  width: 50px;
+  height: 50px;
+  box-shadow: 0 0 5px 1px var(--background-dark);
+}
+
+.TrackHeader {
+  display: flex;
+  flex-direction: column;
+
+  margin-left: 10px;
+}
+
+.Title {
+  color: var(--text-color-white);
+  font-size: 1.5em;
+  font-weight: var(--font-weight-regular);
+}
+
+.Subtitle {
+  color: var(--text-color-light);
+  font-size: 1em;
+  font-weight: var(--font-weight-regular);
+}
