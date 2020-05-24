@@ -140,7 +140,7 @@ const Queries: Queries = {
   },
   createUserWithSpotifyProfileAndSpotifyTokens(profile: SpotifyPrivateProfileResponse, token: SpotifyTokenResponse) {
     const expiresOn = new Date(Date.now() + token.expires_in * 1000)
-    const profilePictureUrl = !!profile.images.length ? `'${profile.images[0].url}'` : null
+    const profilePictureUrl = !!profile.images.length ? profile.images[0].url : null
 
     return query(createUserWithSpotifyProfileAndSpotifyTokensQuery, [
       profile.id,
