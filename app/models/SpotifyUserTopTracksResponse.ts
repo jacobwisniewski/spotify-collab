@@ -1,6 +1,4 @@
-interface ExternalUrls {
-  spotify: string
-}
+import { ExternalUrls, Image } from "./Spotify"
 
 interface SpotifyArtist {
   external_urls: ExternalUrls
@@ -25,12 +23,6 @@ interface SpotifyAlbum {
   total_tracks: number
   type: string
   uri: string
-}
-
-interface Image {
-  height: number
-  url: string
-  width: number
 }
 
 interface ExternalId {

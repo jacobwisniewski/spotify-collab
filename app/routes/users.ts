@@ -37,4 +37,17 @@ router.get("/:spotifyId/tracks", async (req, res, next) => {
   }
 })
 
+router.get("/:spotifyId/artists", async (req, res, next) => {
+  const spotifyId = req.params.spotifyId
+  const timeRange = String(req.query.time_range)
+
+  console.log(`/api/users/${spotifyId}/artists: GET Spotify Artists Data`)
+
+  try {
+    const topArtists = await UserProfileUsecase.getUserTopArtists(spotifyId, timeRange)
+    res.send(topArtists)
+  } catch (error) {
+    next(error)
+  }
+})
 export default router

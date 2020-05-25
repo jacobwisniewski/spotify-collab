@@ -2,6 +2,7 @@ import { SpotifyProfileResponse } from "../models/SpotifyProfileResponse"
 import { ImmutableMap } from "../models/ImmutableMap"
 import { TimeRange } from "../integrations/Integration"
 import { SpotifyTrack } from "../models/SpotifyUserTopTracksResponse"
+import { SpotifyArtist } from "../../../app/db/queries"
 
 export enum IntegrationStatus {
   INITIAL,
@@ -11,6 +12,11 @@ export enum IntegrationStatus {
 }
 
 export type ProfileSearchErrorType = "PROFILE_SEARCH_ERROR"
+
+export enum TopType {
+  TRACKS,
+  ARTISTS
+}
 
 export interface AppState {
   spotifyProfile: SpotifyProfileResponse
@@ -22,6 +28,10 @@ export interface AppState {
   spotifyTopTracksStatus: IntegrationStatus
   spotifyTopTracksError: Error | undefined
   timeRangeSelected: TimeRange
+  topType: TopType
+  spotifyTopArtists: SpotifyArtist[]
+  spotifyTopArtistsStatus: IntegrationStatus
+  spotifyTopArtistsError: Error | undefined
 }
 
 const AppState: AppState = {
@@ -40,7 +50,11 @@ const AppState: AppState = {
   spotifyProfileError: undefined,
   profileSearchValue: "",
   profileSearchErrors: new ImmutableMap(),
-  timeRangeSelected: TimeRange.MEDIUM_TERM
+  timeRangeSelected: TimeRange.MEDIUM_TERM,
+  topType: TopType.TRACKS,
+  spotifyTopArtists: [],
+  spotifyTopArtistsError: undefined,
+  spotifyTopArtistsStatus: IntegrationStatus.INITIAL
 }
 
 export default AppState

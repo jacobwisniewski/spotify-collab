@@ -23,7 +23,9 @@ import {
   createAlbumTableQuery,
   createArtistTableQuery,
   createTrackArtistTableQuery,
-  addUserTopTracksQuery
+  addUserTopTracksQuery,
+  createTopArtistsTableQuery,
+  addUserTopArtistsQuery
 } from "./queryStrings"
 import format from "pg-format"
 
@@ -78,6 +80,7 @@ export interface SpotifyArtist {
   id: string
   name: string
   url: string
+  image?: string
 }
 
 export interface SpotifyTrack {
@@ -103,6 +106,8 @@ interface Queries {
 
   createTrackArtistTable(): Promise<void>
 
+  createTopArtistsTable(): Promise<void>
+
   addUserWithSpotifyProfileAndSpotifyTokens(profile: SpotifyPrivateProfileResponse, tokens: SpotifyTokenResponse): Promise<void>
 
   getPublicSpotifyProfile(spotifyId: string): Promise<PublicSpotifyProfile>
@@ -120,6 +125,8 @@ interface Queries {
   getPrivateSpotifyProfile(spotifyId: string): Promise<PrivateSpotifyProfile>
 
   addUserTopTracks(spotifyId: string, timeRange: TimeRange, userTopTracks: SpotifyTrack[]): Promise<void>
+
+  addUserTopArtists(spotifyId: string, timeRange: TimeRange, userTopArtists: SpotifyArtist[]): Promise<void>
 }
 
 const Queries: Queries = {
@@ -165,6 +172,13 @@ const Queries: Queries = {
     const queryString = format(addUserTopTracksQuery, topTracks, tracks, artists, albums, trackArtist)
     return query(queryString).then(returnVoid)
   },
+  addUserTopArtists(spotifyId: string, timeRange: TimeRange, userTopArtists: SpotifyArtist[]): Promise<void> {
+    const topArtists = userTopArtists.map(({ id }, index) => [spotifyId, id, timeRange, index])
+    const artists = userTopArtists.map(({ id, name, image, url }) => [id, name, image, url])
+
+    const queryString = format(addUserTopArtistsQuery, topArtists, artists)
+    return query(queryString).then(returnVoid)
+  },
   updateUserWithAccessToken(spotifyId: string, token: SpotifyAccessTokenResponse) {
     const expiresOn = new Date(Date.now() + token.expires_in * 1000)
 
@@ -205,6 +219,9 @@ const Queries: Queries = {
   },
   createTrackArtistTable(): Promise<void> {
     return query(createTrackArtistTableQuery).then(returnVoid)
+  },
+  createTopArtistsTable(): Promise<void> {
+    return query(createTopArtistsTableQuery).then(returnVoid)
   }
 }
 
@@ -232,6 +249,7 @@ export const main = async () => {
     await Queries.createTopTracksTable()
     await Queries.createUsersTable()
     await Queries.createSpotifyTokensTable()
+    await Queries.createTopArtistsTable()
   } catch (error) {
     throw error
   }

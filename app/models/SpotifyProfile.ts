@@ -1,4 +1,4 @@
-export interface SpotifyProfileResponse {
+export interface SpotifyProfile {
   spotify_id: string
   display_name: string
   spotify_profile_url: string

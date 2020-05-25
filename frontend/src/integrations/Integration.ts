@@ -1,6 +1,7 @@
 import { SpotifyProfileResponse } from "../models/SpotifyProfileResponse"
 import responseToJson from "../utils/responseToJson"
 import { SpotifyUserTopTracksResponse } from "../models/SpotifyUserTopTracksResponse"
+import { SpotifyUserTopArtistsResponse } from "../models/SpotifyUserTopArtistsResponse"
 
 export enum TimeRange {
   SHORT_TERM = "short_term",
@@ -11,6 +12,7 @@ export enum TimeRange {
 export interface Integration {
   getSpotifyProfileData(spotifyId: string): Promise<SpotifyProfileResponse>
   getSpotifyUserTopTracks(spotifyId: string, timeRange: TimeRange): Promise<SpotifyUserTopTracksResponse>
+  getSpotifyUserTopArtists(spotifyId: string, timeRange: TimeRange): Promise<SpotifyUserTopArtistsResponse>
 }
 
 const Integration: Integration = {
@@ -21,6 +23,11 @@ const Integration: Integration = {
   },
   getSpotifyUserTopTracks(spotifyId: string, timeRange: TimeRange): Promise<SpotifyUserTopTracksResponse> {
     return fetch(`/api/users/${spotifyId}/tracks?time_range=${timeRange}`, {
+      method: "GET"
+    }).then(responseToJson)
+  },
+  getSpotifyUserTopArtists(spotifyId: string, timeRange: TimeRange): Promise<SpotifyUserTopArtistsResponse> {
+    return fetch(`/api/users/${spotifyId}/artists?time_range=${timeRange}`, {
       method: "GET"
     }).then(responseToJson)
   }

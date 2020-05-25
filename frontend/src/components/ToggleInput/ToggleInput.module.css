@@ -1,0 +1,29 @@
+.ToggleInputContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.Button {
+  background: var(--background-medium);
+
+  padding: 0 15px;
+  margin: 5px;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  line-height: 3rem;
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+  color: white;
+  text-decoration: none;
+
+  transition: all 0.15s ease;
+}
+
+.Button:hover {
+  background: var(--background-light);
+}
+
+.Button.Selected {
+  background: var(--background-light);
+}

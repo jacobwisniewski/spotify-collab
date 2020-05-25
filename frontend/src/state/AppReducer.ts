@@ -1,6 +1,6 @@
 import { AppAction } from "./AppAction"
 import { Reducer } from "react"
-import { AppState, IntegrationStatus } from "./AppState"
+import { AppState, IntegrationStatus, TopType } from "./AppState"
 import { applyValidationResults } from "../utils/applyValidationResults"
 import { validateProfileSearch } from "./AppValidators"
 
@@ -23,10 +23,17 @@ const AppReducer: Reducer<AppState, AppAction> = (prevState, action): AppState =
         spotifyProfileStatus: IntegrationStatus.ERROR
       }
 
-    case "SPOTIFY_USER_TOP_TRACKS_LOADING":
-      return {
-        ...prevState,
-        spotifyTopTracksStatus: IntegrationStatus.LOADING
+    case "SPOTIFY_USER_TOP_TYPE_LOADING":
+      if (prevState.topType === TopType.TRACKS) {
+        return {
+          ...prevState,
+          spotifyTopTracksStatus: IntegrationStatus.LOADING
+        }
+      } else {
+        return {
+          ...prevState,
+          spotifyTopArtistsStatus: IntegrationStatus.LOADING
+        }
       }
 
     case "SPOTIFY_USER_TOP_TRACKS_SUCCESS":
@@ -56,6 +63,7 @@ const AppReducer: Reducer<AppState, AppAction> = (prevState, action): AppState =
         profileSearchErrors: applyValidationResults([validateProfileSearch(prevState.profileSearchValue)], prevState.profileSearchErrors),
         profileSearchValue: ""
       }
+
     case "TIME_RANGE_CHANGE":
       return {
         ...prevState,
@@ -75,6 +83,26 @@ const AppReducer: Reducer<AppState, AppAction> = (prevState, action): AppState =
           extended_data: false
         },
         profileSearchValue: ""
+      }
+
+    case "SPOTIFY_USER_TOP_ARTISTS_ERROR":
+      return {
+        ...prevState,
+        spotifyTopArtistsError: action.payload,
+        spotifyTopArtistsStatus: IntegrationStatus.ERROR
+      }
+
+    case "SPOTIFY_USER_TOP_ARTISTS_SUCCESS":
+      return {
+        ...prevState,
+        spotifyTopArtists: action.payload,
+        spotifyTopArtistsStatus: IntegrationStatus.SUCCESS
+      }
+
+    case "TOP_TYPE_CHANGE":
+      return {
+        ...prevState,
+        topType: action.payload
       }
   }
   return prevState

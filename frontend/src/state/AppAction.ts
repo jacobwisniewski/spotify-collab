@@ -1,12 +1,13 @@
 import { ActionWithEffects } from "../hooks/userReducerWithEffects"
-import { AppState } from "./AppState"
+import { AppState, TopType } from "./AppState"
 import { AppEffectContext } from "../effects/AppEffect"
 import userProfilePageLoading from "../effects/userProfilePageLoading"
 import { SpotifyProfileResponse } from "../models/SpotifyProfileResponse"
 import profileSearchClickEffect from "../effects/profileSearchClickEffect"
-import spotifyUserTopTracksLoadingEffect from "../effects/spotifyUserTopTracksLoadingEffect"
+import spotifyUserTopTypeLoadingEffect from "../effects/spotifyUserTopTypeLoadingEffect"
 import { SpotifyUserTopTracksResponse } from "../models/SpotifyUserTopTracksResponse"
 import { TimeRange } from "../integrations/Integration"
+import { SpotifyUserTopArtistsResponse } from "../models/SpotifyUserTopArtistsResponse"
 
 export interface Action<T, P> extends ActionWithEffects<AppState, AppAction, AppEffectContext> {
   type: T
@@ -32,11 +33,11 @@ export const spotifyProfileError = (error: Error): SpotifyProfileErrorAction => 
   payload: error
 })
 
-export type SpotifyUserTopTracksLoadingAction = Action<"SPOTIFY_USER_TOP_TRACKS_LOADING", string>
-export const spotifyUserTopTracksLoading = (spotifyId: string): SpotifyUserTopTracksLoadingAction => ({
-  type: "SPOTIFY_USER_TOP_TRACKS_LOADING",
-  payload: spotifyId,
-  effects: spotifyUserTopTracksLoadingEffect
+export type SpotifyUserTopTypeLoadingAction = Action<"SPOTIFY_USER_TOP_TYPE_LOADING", undefined>
+export const spotifyUserTopTypeLoading = (): SpotifyUserTopTypeLoadingAction => ({
+  type: "SPOTIFY_USER_TOP_TYPE_LOADING",
+  payload: undefined,
+  effects: spotifyUserTopTypeLoadingEffect
 })
 
 export type SpotifyUserTopTracksSuccessAction = Action<"SPOTIFY_USER_TOP_TRACKS_SUCCESS", SpotifyUserTopTracksResponse>
@@ -48,6 +49,18 @@ export const spotifyUserTopTracksSuccess = (spotifyUserTopTracks: SpotifyUserTop
 export type SpotifyUserTopTracksErrorAction = Action<"SPOTIFY_USER_TOP_TRACKS_ERROR", Error>
 export const spotifyUserTopTracksError = (error: Error): SpotifyUserTopTracksErrorAction => ({
   type: "SPOTIFY_USER_TOP_TRACKS_ERROR",
+  payload: error
+})
+
+export type SpotifyUserTopArtistsSuccessAction = Action<"SPOTIFY_USER_TOP_ARTISTS_SUCCESS", SpotifyUserTopArtistsResponse>
+export const spotifyUserTopArtistsSuccess = (spotifyUserTopArtists: SpotifyUserTopArtistsResponse): SpotifyUserTopArtistsSuccessAction => ({
+  type: "SPOTIFY_USER_TOP_ARTISTS_SUCCESS",
+  payload: spotifyUserTopArtists
+})
+
+export type SpotifyUserTopArtistsErrorAction = Action<"SPOTIFY_USER_TOP_ARTISTS_ERROR", Error>
+export const spotifyUserTopArtistsError = (error: Error): SpotifyUserTopArtistsErrorAction => ({
+  type: "SPOTIFY_USER_TOP_ARTISTS_ERROR",
   payload: error
 })
 
@@ -74,7 +87,13 @@ export type TimeRangeChangeAction = Action<"TIME_RANGE_CHANGE", TimeRange>
 export const timeRangeChange = (timeRange: TimeRange): TimeRangeChangeAction => ({
   type: "TIME_RANGE_CHANGE",
   payload: timeRange,
-  effects: spotifyUserTopTracksLoadingEffect
+  effects: spotifyUserTopTypeLoadingEffect
+})
+
+export type TopTypeChangeAction = Action<"TOP_TYPE_CHANGE", TopType>
+export const topTypeChange = (topType: TopType): TopTypeChangeAction => ({
+  type: "TOP_TYPE_CHANGE",
+  payload: topType
 })
 
 export type AppAction =
@@ -84,7 +103,10 @@ export type AppAction =
   | ProfileSearchChangeAction
   | ProfileSearchClickAction
   | NavigateToLandingPageAction
-  | SpotifyUserTopTracksLoadingAction
+  | SpotifyUserTopTypeLoadingAction
   | SpotifyUserTopTracksSuccessAction
   | SpotifyUserTopTracksErrorAction
   | TimeRangeChangeAction
+  | SpotifyUserTopArtistsErrorAction
+  | SpotifyUserTopArtistsSuccessAction
+  | TopTypeChangeAction

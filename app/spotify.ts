@@ -1,4 +1,4 @@
-import Queries, { SpotifyTrack } from "./db/queries"
+import Queries, { SpotifyArtist, SpotifyTrack } from "./db/queries"
 import SpotifyService, { SpotifyAccessTokenResponse, TimeRange } from "./services/SpotifyService"
 import { config } from "dotenv"
 import createError from "http-errors"
@@ -45,8 +45,25 @@ export const getUserTopTracks = async (spotifyId: string, timeRange: TimeRange):
       artists: artists.map(({ id, name, external_urls }) => ({ id, name, url: external_urls.spotify })),
       album: { id: album.id, name: album.name, image: album.images[0].url, url: external_urls.spotify }
     }))
-    await Queries.addUserTopTracks(spotifyId, TimeRange.MEDIUM_TERM, topTracks)
+    await Queries.addUserTopTracks(spotifyId, timeRange, topTracks)
     return topTracks
+  } catch (error) {
+    throw error
+  }
+}
+
+export const getUserTopArtists = async (spotifyId: string, timeRange: TimeRange): Promise<SpotifyArtist[]> => {
+  try {
+    const accessToken = await checkForExpiredSpotifyAccessToken(spotifyId)
+    const topArtistsResponse = await SpotifyService.getUserTopArtists(accessToken, timeRange, 25, 0)
+    const topArtists = topArtistsResponse.items.map(({ id, name, images, external_urls }) => ({
+      id,
+      name,
+      image: images[0].url,
+      url: external_urls.spotify
+    }))
+    await Queries.addUserTopArtists(spotifyId, timeRange, topArtists)
+    return topArtists
   } catch (error) {
     throw error
   }

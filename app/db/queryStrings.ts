@@ -97,7 +97,19 @@ export const createArtistTableQuery = `
         id VARCHAR (100),
         name VARCHAR (100),
         url VARCHAR (100),
+        image VARCHAR (100),
         PRIMARY KEY (id)
+    )
+`
+
+export const createTopArtistsTableQuery = `
+    CREATE TABLE IF NOT EXISTS top_artists (
+        spotify_id VARCHAR (100),
+        artist_id VARCHAR (100),
+        time_range VARCHAR (100),
+        position INTEGER,
+        PRIMARY KEY (spotify_id, time_range, position),
+        UNIQUE (spotify_id, time_range, position)
     )
 `
 
@@ -138,5 +150,15 @@ export const addUserTopTracksQuery = `
         ON conflict DO nothing
     )
     INSERT INTO track_artist (track_id, artist_id) VALUES %L
+    ON conflict DO nothing
+`
+
+export const addUserTopArtistsQuery = `
+    WITH added_top_artists AS (
+        INSERT INTO top_artists (spotify_id, artist_id, time_range, position) VALUES %L
+        ON conflict (spotify_id, time_range, position) DO UPDATE
+        SET artist_id = EXCLUDED.artist_id
+    )
+    INSERT INTO artists (id, name, image, url) VALUES %L
     ON conflict DO nothing
 `
