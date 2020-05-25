@@ -56,6 +56,11 @@ const AppReducer: Reducer<AppState, AppAction> = (prevState, action): AppState =
         profileSearchErrors: applyValidationResults([validateProfileSearch(prevState.profileSearchValue)], prevState.profileSearchErrors),
         profileSearchValue: ""
       }
+    case "TIME_RANGE_CHANGE":
+      return {
+        ...prevState,
+        timeRangeSelected: action.payload
+      }
 
     case "NAVIGATE_TO_LANDING_PAGE":
       return {

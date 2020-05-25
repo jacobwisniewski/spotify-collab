@@ -92,8 +92,20 @@
   background-color: var(--background-medium);
 }
 
-.TrackTitle {
+.TrackHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
   margin-bottom: 20px;
+}
+
+.TimeRangeInput {
+  width: 140px;
+}
+
+.TrackTitle {
   font-weight: var(--font-weight-bold);
 }
 

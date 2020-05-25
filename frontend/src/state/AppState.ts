@@ -21,7 +21,7 @@ export interface AppState {
   spotifyTopTracks: SpotifyTrack[]
   spotifyTopTracksStatus: IntegrationStatus
   spotifyTopTracksError: Error | undefined
-  timeRange: TimeRange
+  timeRangeSelected: TimeRange
 }
 
 const AppState: AppState = {
@@ -36,11 +36,11 @@ const AppState: AppState = {
   spotifyTopTracks: [],
   spotifyTopTracksStatus: IntegrationStatus.INITIAL,
   spotifyTopTracksError: undefined,
-  timeRange: TimeRange.MEDIUM_TERM,
   spotifyProfileStatus: IntegrationStatus.INITIAL,
   spotifyProfileError: undefined,
   profileSearchValue: "",
-  profileSearchErrors: new ImmutableMap()
+  profileSearchErrors: new ImmutableMap(),
+  timeRangeSelected: TimeRange.MEDIUM_TERM
 }
 
 export default AppState

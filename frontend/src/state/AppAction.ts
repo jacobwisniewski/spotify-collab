@@ -6,6 +6,7 @@ import { SpotifyProfileResponse } from "../models/SpotifyProfileResponse"
 import profileSearchClickEffect from "../effects/profileSearchClickEffect"
 import spotifyUserTopTracksLoadingEffect from "../effects/spotifyUserTopTracksLoadingEffect"
 import { SpotifyUserTopTracksResponse } from "../models/SpotifyUserTopTracksResponse"
+import { TimeRange } from "../integrations/Integration"
 
 export interface Action<T, P> extends ActionWithEffects<AppState, AppAction, AppEffectContext> {
   type: T
@@ -69,6 +70,13 @@ export const navigateToLandingPage = (): NavigateToLandingPageAction => ({
   payload: undefined
 })
 
+export type TimeRangeChangeAction = Action<"TIME_RANGE_CHANGE", TimeRange>
+export const timeRangeChange = (timeRange: TimeRange): TimeRangeChangeAction => ({
+  type: "TIME_RANGE_CHANGE",
+  payload: timeRange,
+  effects: spotifyUserTopTracksLoadingEffect
+})
+
 export type AppAction =
   | SpotifyProfileLoadingAction
   | SpotifyProfileSuccessAction
@@ -79,3 +87,4 @@ export type AppAction =
   | SpotifyUserTopTracksLoadingAction
   | SpotifyUserTopTracksSuccessAction
   | SpotifyUserTopTracksErrorAction
+  | TimeRangeChangeAction

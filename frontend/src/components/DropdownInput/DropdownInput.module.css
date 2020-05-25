@@ -1,0 +1,74 @@
+.DropdownInputContainer {
+  position: relative;
+}
+
+.InputContainer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+
+  background-color: var(--background-light);
+  border-radius: 4px;
+}
+
+.Input {
+  border: none;
+  outline: 0;
+  background-color: transparent;
+
+  font-size: 1.5rem;
+  text-indent: 2rem;
+  line-height: 3rem;
+  color: var(--text-color-white);
+  font-weight: var(--font-weight-bold);
+
+  z-index: 2;
+}
+
+.OptionsContainer {
+  position: absolute;
+  max-height: 300px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 4px;
+  background-color: var(--background-medium);
+  border: 1px solid var(--background-light);
+  z-index: 2;
+
+  list-style-type: none;
+  padding: 4px 0 4px 0;
+  margin: 5px 0 0 0;
+}
+
+.OptionContainer {
+  animation: SlideOutAnimation ease 500ms;
+  display: flex;
+  align-items: center;
+
+  line-height: 3rem;
+  font-size: 1.5rem;
+  color: var(--text-color-white);
+
+  text-indent: 2rem;
+}
+
+.OptionContainer.Highlighted {
+  background-color: var(--background-light);
+  margin-left: 4px;
+  margin-right: 4px;
+  border-radius: 4px;
+  text-indent: 1.6rem;
+}
+
+.OptionsContainer li:last-of-type {
+  border: none;
+}
+
+@keyframes SlideOutAnimation {
+  0% {
+    opacity: 0.25;
+  }
+  100% {
+    opacity: 1;
+  }
+}

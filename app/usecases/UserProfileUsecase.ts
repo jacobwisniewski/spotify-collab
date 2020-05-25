@@ -1,6 +1,6 @@
 import { getPublicSpotifyUserData, getUserTopTracks } from "../spotify"
 import { SpotifyProfileResponse } from "../models/SpotifyProfileResponse"
-import { TimeRange } from "../services/SpotifyService"
+import SpotifyService, { TimeRange } from "../services/SpotifyService"
 import createHttpError from "http-errors"
 import Queries from "../db/queries"
 
