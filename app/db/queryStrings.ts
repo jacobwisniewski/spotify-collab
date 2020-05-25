@@ -160,5 +160,6 @@ export const addUserTopArtistsQuery = `
         SET artist_id = EXCLUDED.artist_id
     )
     INSERT INTO artists (id, name, image, url) VALUES %L
-    ON conflict DO nothing
+    ON conflict (id) DO UPDATE
+    SET image = EXCLUDED.image 
 `
