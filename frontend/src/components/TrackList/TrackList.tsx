@@ -21,7 +21,9 @@ const Track: FunctionComponent<TrackProps> = ({ name, artists, album, url, order
       {order && <div className={styles.Order}>{order}</div>}
       <img className={styles.AlbumCover} src={album.image} alt={name} />
       <div className={styles.TrackHeader}>
-        <div className={styles.Title}>{name}</div>
+        <a href={url} className={styles.Title}>
+          {name}
+        </a>
         <div className={styles.Subtitle}>{`${artists.map(({ name }) => name).join(", ")} • ${album.name}`}</div>
       </div>
     </div>

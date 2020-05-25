@@ -34,6 +34,13 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  text-decoration: none;
+
+  transition: color 100ms ease-in-out;
+}
+
+.Title:hover {
+  color: var(--brand-purple-primary);
 }
 
 .Subtitle {
