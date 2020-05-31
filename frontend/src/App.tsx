@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useLayoutEffect } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 import AppState, { LoginStatus } from "./state/AppState"
 import routeConfig from "./routeConfig"
 import { navigate, useRoutes } from "hookrouter"

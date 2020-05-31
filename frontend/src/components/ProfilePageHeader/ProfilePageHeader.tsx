@@ -17,12 +17,12 @@ const ProfilePageHeaderLoading: FunctionComponent = () => {
     <div className={joinClasses(styles.HeaderContainer, styles.Loading)}>
       <div className={styles.HeaderBackground} />
       <div className={styles.ProfilePicture} />
-      <h2 className={styles.Header} />
-      <h3 className={styles.Subtitle} />
+      <div className={styles.Header} />
+      <div className={styles.Subtitle} />
       <hr className={styles.HeaderRule} />
       <div className={styles.InfoContainer}>
         <Button title={"Open to Spotify"} disabled={true} />
-        <h3 className={styles.Followers} />
+        <div className={styles.Followers} />
       </div>
     </div>
   )

@@ -15,7 +15,7 @@ const Button: FunctionComponent<ButtonProps> = ({ title, onClick, disabled }) =>
       event.preventDefault()
       !disabled && onClick!()
     },
-    [onClick]
+    [onClick, disabled]
   )
 
   return (

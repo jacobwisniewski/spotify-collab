@@ -1,14 +1,7 @@
 import { Page } from "../Page"
 import React, { FunctionComponent, useCallback, useEffect } from "react"
-import {
-  navigateToLandingPage,
-  spotifyProfileLoading,
-  spotifyProfileSuccess,
-  spotifyUserTopTypeLoading,
-  timeRangeChange,
-  topTypeChange
-} from "../../state/AppAction"
-import { IntegrationStatus, TopType } from "../../state/AppState"
+import { navigateToLandingPage, spotifyProfileLoading, spotifyUserTopTypeLoading } from "../../state/AppAction"
+import { IntegrationStatus } from "../../state/AppState"
 import styles from "./ProfilePage.module.css"
 import Header, { HeaderClickHandler } from "../../components/Header/Header"
 import Button, { ButtonClickHandler } from "../../components/Button/Button"

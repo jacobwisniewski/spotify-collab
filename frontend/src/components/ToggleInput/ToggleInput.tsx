@@ -24,7 +24,7 @@ const ToggleInput: FunctionComponent<ToggleInputProps> = ({ selected, left, righ
       const selected = (event.target as HTMLButtonElement).value
       onSelect({ selected: selected })
     },
-    [left, right, onSelect]
+    [onSelect]
   )
 
   return (
