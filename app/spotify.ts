@@ -1,19 +1,11 @@
-import Queries, { SpotifyArtist, SpotifyTrack } from "./db/queries"
+import Queries, { PrivateSpotifyProfile, PublicSpotifyProfile, SpotifyArtist, SpotifyTrack } from "./db/queries"
 import SpotifyService, { SpotifyAccessTokenResponse, TimeRange } from "./services/SpotifyService"
 import { config } from "dotenv"
 import createError from "http-errors"
 
 config()
 
-export interface PublicSpotifyProfileData {
-  spotify_id: string
-  display_name: string
-  profile_picture_url: string
-  spotify_profile_url: string
-  followers: number
-}
-
-export const getPublicSpotifyUserData = async (spotifyId: string): Promise<PublicSpotifyProfileData> => {
+export const getPublicSpotifyUserData = async (spotifyId: string): Promise<PublicSpotifyProfile> => {
   let spotifyProfile = await Queries.getPublicSpotifyProfile(spotifyId)
   if (!spotifyProfile) {
     console.log(`Didn't find ${spotifyId} in database, requesting from Spotify.`)
@@ -32,6 +24,14 @@ export const getPublicSpotifyUserData = async (spotifyId: string): Promise<Publi
   }
 
   return spotifyProfile
+}
+
+export const getPrivateSpotifyUserData = async (spotifyId: string): Promise<PrivateSpotifyProfile> => {
+  try {
+    return await Queries.getPrivateSpotifyProfile(spotifyId)
+  } catch (error) {
+    throw error
+  }
 }
 
 export const getUserTopTracks = async (spotifyId: string, timeRange: TimeRange): Promise<SpotifyTrack[]> => {

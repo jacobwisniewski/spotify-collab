@@ -25,7 +25,8 @@ import {
   createTrackArtistTableQuery,
   addUserTopTracksQuery,
   createTopArtistsTableQuery,
-  addUserTopArtistsQuery
+  addUserTopArtistsQuery,
+  getRefreshTokenFromSpotifyIdQuery
 } from "./queryStrings"
 import format from "pg-format"
 
@@ -45,7 +46,7 @@ pool.on("connect", (client: PoolClient) => {
   console.log("Database connected.")
 })
 
-interface PublicSpotifyProfile {
+export interface PublicSpotifyProfile {
   spotify_id: string
   display_name: string
   spotify_profile_url: string
@@ -53,7 +54,7 @@ interface PublicSpotifyProfile {
   followers: number
 }
 
-interface PrivateSpotifyProfile {
+export interface PrivateSpotifyProfile {
   spotify_id: string
   display_name: string
   spotify_profile_url: string
@@ -61,6 +62,7 @@ interface PrivateSpotifyProfile {
   followers: number
   country: string
   email: string
+  spotify_account_type: string
 }
 
 interface SpotifyTokens {
@@ -91,6 +93,14 @@ export interface SpotifyTrack {
   artists: SpotifyArtist[]
 }
 
+export interface RefreshToken {
+  refresh_token: string
+}
+
+export interface SpotifyId {
+  spotify_id: string
+}
+
 interface Queries {
   createSpotifyTokensTable(): Promise<void>
 
@@ -112,7 +122,7 @@ interface Queries {
 
   getPublicSpotifyProfile(spotifyId: string): Promise<PublicSpotifyProfile>
 
-  getSpotifyIdFromRefreshToken(refreshToken: string): Promise<string>
+  getSpotifyIdFromRefreshToken(refreshToken: string): Promise<SpotifyId>
 
   updateUserRefreshToken(refreshToken: string, spotifyId: string): Promise<any>
 
@@ -127,9 +137,14 @@ interface Queries {
   addUserTopTracks(spotifyId: string, timeRange: TimeRange, userTopTracks: SpotifyTrack[]): Promise<void>
 
   addUserTopArtists(spotifyId: string, timeRange: TimeRange, userTopArtists: SpotifyArtist[]): Promise<void>
+
+  getRefreshTokenFromSpotifyId(spotifyId: string): Promise<RefreshToken>
 }
 
 const Queries: Queries = {
+  getRefreshTokenFromSpotifyId(spotifyId: string): Promise<RefreshToken> {
+    return query<RefreshToken>(getRefreshTokenFromSpotifyIdQuery, [spotifyId]).then(getFirstResult)
+  },
   createUserWithSpotifyProfile(userData: SpotifyPublicProfileResponse) {
     const profilePictureUrl = !!userData.images.length ? userData.images[0].url : null
 
@@ -191,7 +206,7 @@ const Queries: Queries = {
     return query(updateRefreshTokenQuery, [refreshToken, spotifyId]).then(returnVoid)
   },
   getSpotifyIdFromRefreshToken(refreshToken: string) {
-    return query<string>(getUserRefreshTokenQuery, [refreshToken]).then(getFirstResult)
+    return query<SpotifyId>(getUserRefreshTokenQuery, [refreshToken]).then(getFirstResult)
   },
   getPublicSpotifyProfile(spotifyId: string) {
     return query<PublicSpotifyProfile>(getPublicSpotifyProfileQuery, [spotifyId]).then(getFirstResult)

@@ -51,14 +51,10 @@ router.post("/token", async (req, res, next) => {
   const token = req.cookies[process.env.COOKIE_REFRESH_TOKEN]
 
   try {
-    const { accessToken, refreshToken } = await UserAuthenticationUsecase.refreshAuthorizationTokens(token)
+    const accessToken = await UserAuthenticationUsecase.refreshAccessToken(token)
+
     res.cookie(process.env.COOKIE_ACCESS_TOKEN, accessToken.token, {
       maxAge: accessToken.expiresIn * 1000,
-      httpOnly: true
-    })
-
-    res.cookie(process.env.COOKIE_REFRESH_TOKEN, refreshToken.token, {
-      maxAge: refreshToken.expiresIn,
       httpOnly: true
     })
 

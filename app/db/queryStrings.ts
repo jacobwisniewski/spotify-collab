@@ -15,6 +15,10 @@ export const updateRefreshTokenQuery = `
     UPDATE users SET refresh_token = $1 WHERE users.spotify_id = $2
 `
 
+export const getRefreshTokenFromSpotifyIdQuery = `
+    SELECT refresh_token FROM users WHERE users.spotify_id = $1
+`
+
 export const getUserRefreshTokenQuery = `
     SELECT spotify_id FROM users WHERE users.refresh_token = $1
 `

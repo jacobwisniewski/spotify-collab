@@ -3,6 +3,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import { config } from "dotenv"
 import UserProfileUsecase from "../usecases/UserProfileUsecase"
+import { AuthRequest, userAuthentication } from "../middleware/authentication"
 
 config()
 
@@ -10,13 +11,26 @@ const router = express.Router()
 router.use(cors())
 router.use(cookieParser())
 
+router.get("/", userAuthentication, async (req: AuthRequest, res, next) => {
+  const spotifyId = req.user
+
+  console.log(`/api/users/${spotifyId}: GET User Data`)
+
+  try {
+    const userData = await UserProfileUsecase.getUserData(spotifyId)
+    res.send(userData)
+  } catch (error) {
+    next(error)
+  }
+})
+
 router.get("/:spotifyId", async (req, res, next) => {
   const spotifyId = req.params.spotifyId
 
-  console.log(`/api/users/${spotifyId}: GET Spotify User Data`)
+  console.log(`/api/users/${spotifyId}: GET User Profile Data`)
 
   try {
-    const spotifyProfile = await UserProfileUsecase.getSpotifyProfile(spotifyId)
+    const spotifyProfile = await UserProfileUsecase.getUserProfile(spotifyId)
     res.send(spotifyProfile)
   } catch (error) {
     next(error)
@@ -50,4 +64,5 @@ router.get("/:spotifyId/artists", async (req, res, next) => {
     next(error)
   }
 })
+
 export default router

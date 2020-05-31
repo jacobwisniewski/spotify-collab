@@ -27,7 +27,7 @@ interface AuthorizeUrlResponse {
 interface UserAuthenticationUsecase {
   createOrUpdateUser(receivedState: string, expectedState: string, authorizationCode: string): Promise<CallbackResponse>
   getSpotifyAuthorizeUrl(): AuthorizeUrlResponse
-  refreshAuthorizationTokens(refreshToken: string): Promise<AuthenticationTokens>
+  refreshAccessToken(refreshToken: string): Promise<Token>
 }
 
 const UserAuthenticationUsecase: UserAuthenticationUsecase = {
@@ -42,11 +42,29 @@ const UserAuthenticationUsecase: UserAuthenticationUsecase = {
 
       await Queries.addUserWithSpotifyProfileAndSpotifyTokens(spotifyUserData, tokenResponse)
 
-      const authenticationTokens = createAuthenticationTokens(spotifyUserData.id)
-      await Queries.updateUserRefreshToken(authenticationTokens.refreshToken.token, spotifyUserData.id)
+      const { refresh_token: refreshTokenString } = await Queries.getRefreshTokenFromSpotifyId(spotifyUserData.id)
+
+      let accessToken: Token
+      let refreshToken: Token
+      if (!refreshTokenString) {
+        const authenticationToken = createAuthenticationTokens(spotifyUserData.id)
+        accessToken = authenticationToken.accessToken
+        refreshToken = authenticationToken.refreshToken
+
+        await Queries.updateUserRefreshToken(authenticationToken.refreshToken.token, spotifyUserData.id)
+      } else {
+        refreshToken = {
+          token: refreshTokenString,
+          expiresIn: 365 * 24 * 60 * 60
+        }
+        accessToken = createAccessToken(spotifyUserData.id)
+      }
 
       return {
-        tokens: authenticationTokens,
+        tokens: {
+          accessToken,
+          refreshToken
+        },
         spotifyId: spotifyUserData.id
       }
     } catch (error) {
@@ -68,32 +86,27 @@ const UserAuthenticationUsecase: UserAuthenticationUsecase = {
         `&show_dialog=false`
     }
   },
-  async refreshAuthorizationTokens(refreshToken: string): Promise<AuthenticationTokens> {
-    const spotifyId = await Queries.getSpotifyIdFromRefreshToken(refreshToken)
+  async refreshAccessToken(refreshToken: string): Promise<Token> {
+    const { spotify_id: spotifyId } = await Queries.getSpotifyIdFromRefreshToken(refreshToken)
 
     if (!spotifyId) throw createError(400, "Refresh token does not return valid user")
 
-    const tokens = createAuthenticationTokens(spotifyId)
-    await Queries.updateUserRefreshToken(tokens.refreshToken.token, spotifyId)
-
-    return tokens
+    return createAccessToken(spotifyId)
   }
 }
 
-const createAuthenticationTokens = (spotifyId: string): AuthenticationTokens => {
-  const accessToken = sign({ spotifyId }, process.env.JWT_ACCESS_TOKEN_SECRET_KEY, {
-    expiresIn: Number(process.env.JWT_ACCESS_TOKEN_EXPIRY_SECONDS)
-  })
-  const refreshToken = sign({ spotifyId }, process.env.JWT_REFRESH_TOKEN_SECRET_KEY)
+const createAuthenticationTokens = (spotifyId: string): AuthenticationTokens => ({
+  refreshToken: createJWTToken(spotifyId, process.env.JWT_REFRESH_TOKEN_SECRET_KEY, 365 * 24 * 60 * 60),
+  accessToken: createAccessToken(spotifyId)
+})
+
+const createAccessToken = (spotifyId: string): Token =>
+  createJWTToken(spotifyId, process.env.JWT_ACCESS_TOKEN_SECRET_KEY, Number(process.env.JWT_ACCESS_TOKEN_EXPIRY_SECONDS))
+
+const createJWTToken = (spotifyId: string, secretKey: string, expiresIn: number): Token => {
   return {
-    refreshToken: {
-      token: refreshToken,
-      expiresIn: 365 * 24 * 60 * 60 * 1000
-    },
-    accessToken: {
-      token: accessToken,
-      expiresIn: Number(process.env.JWT_ACCESS_TOKEN_EXPIRY_SECONDS)
-    }
+    token: sign({ spotifyId }, secretKey, { expiresIn }),
+    expiresIn
   }
 }
 
