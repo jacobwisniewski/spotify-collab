@@ -75,8 +75,8 @@ const AppState: AppState = {
   topType: TopType.TRACKS,
   spotifyTopArtists: [],
   spotifyTopArtistsError: undefined,
-  spotifyTopArtistsStatus: IntegrationStatus.LOADING,
-  refreshAccessTokenStatus: IntegrationStatus.LOADING,
+  spotifyTopArtistsStatus: IntegrationStatus.INITIAL,
+  refreshAccessTokenStatus: IntegrationStatus.INITIAL,
   refreshAccessTokenError: undefined,
   userData: {
     spotify_id: "",
