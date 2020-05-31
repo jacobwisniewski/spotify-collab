@@ -1,24 +1,24 @@
 import { Integration } from "./Integration"
-import { SpotifyProfileResponse } from "../models/SpotifyProfileResponse"
+import { UserProfileResponse } from "../models/UserProfileResponse"
 import { SpotifyUserTopArtistsResponse } from "../models/SpotifyUserTopArtistsResponse"
+import { UserDataResponse } from "../models/UserDataResponse"
 
 const MockIntegration: Integration = {
-  getSpotifyProfileData() {
+  getUserProfile() {
     return new Promise((resolve) =>
       setTimeout(
         () =>
           resolve({
-            spotify_id: "mlqeo7jnhsus5p2tks5jlxkzw",
-            display_name: "Jacob Wisniewski",
+            spotifyId: "mlqeo7jnhsus5p2tks5jlxkzw",
+            displayName: "Jacob Wisniewski",
             country: "AU",
             email: "jacobwisniee@gmail.com",
-            spotify_profile_url: "https://open.spotify.com/user/mlqeo7jnhsus5p2tks5jlxkzw",
-            profile_picture_url: null,
+            spotifyProfileUrl: "https://open.spotify.com/user/mlqeo7jnhsus5p2tks5jlxkzw",
+            spotifyPictureUrl: null,
             followers: 0,
-            spotify_account_type: "premium",
-            extended_data: true
-          } as SpotifyProfileResponse),
-        500
+            extendedData: true
+          } as UserProfileResponse),
+        0
       )
     )
   },
@@ -711,6 +711,31 @@ const MockIntegration: Integration = {
         1000
       )
     )
+  },
+  getUserData() {
+    // return Promise.resolve({
+    //   country: "AU",
+    //   display_name: "Jacob Wisniewski",
+    //   email: "jacobwisniee@gmail.com",
+    //   followers: 0,
+    //   profile_picture_url: null,
+    //   spotify_account_type: "premium",
+    //   spotify_id: "mlqeo7jnhsus5p2tks5jlxkzw",
+    //   spotify_profile_url: "https://open.spotify.com/user/mlqeo7jnhsus5p2tks5jlxkzw"
+    // } as UserDataResponse)
+
+    return Promise.reject()
+  },
+  getUserSessionData(): UserDataResponse | undefined {
+    const userDataString = sessionStorage.getItem("userData")
+    if (userDataString) return JSON.parse(userDataString)
+    return undefined
+  },
+  setUserSessionData(userData: UserDataResponse): void {
+    sessionStorage.setItem("userData", JSON.stringify(userData))
+  },
+  refreshAccessTokens() {
+    return Promise.resolve()
   }
 }
 

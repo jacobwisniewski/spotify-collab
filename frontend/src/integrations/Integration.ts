@@ -1,7 +1,8 @@
-import { SpotifyProfileResponse } from "../models/SpotifyProfileResponse"
+import { UserProfileResponse } from "../models/UserProfileResponse"
 import responseToJson from "../utils/responseToJson"
 import { SpotifyUserTopTracksResponse } from "../models/SpotifyUserTopTracksResponse"
 import { SpotifyUserTopArtistsResponse } from "../models/SpotifyUserTopArtistsResponse"
+import { UserDataResponse } from "../models/UserDataResponse"
 
 export enum TimeRange {
   SHORT_TERM = "short_term",
@@ -10,13 +11,29 @@ export enum TimeRange {
 }
 
 export interface Integration {
-  getSpotifyProfileData(spotifyId: string): Promise<SpotifyProfileResponse>
+  getUserData(): Promise<UserDataResponse>
+  refreshAccessTokens(): Promise<void>
+  getUserProfile(spotifyId: string): Promise<UserProfileResponse>
   getSpotifyUserTopTracks(spotifyId: string, timeRange: TimeRange): Promise<SpotifyUserTopTracksResponse>
   getSpotifyUserTopArtists(spotifyId: string, timeRange: TimeRange): Promise<SpotifyUserTopArtistsResponse>
+  getUserSessionData(): UserDataResponse | undefined
+  setUserSessionData(userData: UserDataResponse): void
 }
 
 const Integration: Integration = {
-  getSpotifyProfileData(spotifyId) {
+  refreshAccessTokens(): Promise<void> {
+    return fetch(`/api/auth/token`, {
+      method: "POST",
+      credentials: "include"
+    }).then(responseToJson)
+  },
+  getUserData() {
+    return fetch(`/api/users`, {
+      method: "GET",
+      credentials: "include"
+    }).then(responseToJson)
+  },
+  getUserProfile(spotifyId) {
     return fetch(`/api/users/${spotifyId}`, {
       method: "GET"
     }).then(responseToJson)
@@ -30,6 +47,14 @@ const Integration: Integration = {
     return fetch(`/api/users/${spotifyId}/artists?time_range=${timeRange}`, {
       method: "GET"
     }).then(responseToJson)
+  },
+  getUserSessionData(): UserDataResponse | undefined {
+    const userDataString = sessionStorage.getItem("userData")
+    if (userDataString) return JSON.parse(userDataString)
+    return undefined
+  },
+  setUserSessionData(userData: UserDataResponse): void {
+    sessionStorage.setItem("userData", JSON.stringify(userData))
   }
 }
 

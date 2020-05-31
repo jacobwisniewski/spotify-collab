@@ -6,10 +6,14 @@ import Button, { ButtonClickHandler } from "../../components/Button/Button"
 import Message, { MessageType } from "../../components/Message/Message"
 import { profileSearchChange, profileSearchClick } from "../../state/AppAction"
 import Field from "../../components/Field/Field"
+import { LoginStatus } from "../../state/AppState"
+import { navigate } from "hookrouter"
 
 const LandingPage: Page = ({ integration, state, dispatch }) => {
   const profileSearchError = state.profileSearchErrors.getOrDefault("PROFILE_SEARCH_ERROR", "")
-  const { profileSearchValue } = state
+  const { profileSearchValue, loginStatus } = state
+
+  const isLoggedIn = loginStatus === LoginStatus.LOGGED_IN
 
   const onSearchChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
     (event) => {
@@ -32,8 +36,12 @@ const LandingPage: Page = ({ integration, state, dispatch }) => {
   }, [dispatch, profileSearchValue])
 
   const onLoginClick = useCallback<ButtonClickHandler>(() => {
-    window.location.href = "/api/auth/authorize"
-  }, [])
+    if (isLoggedIn) {
+      navigate(`/@${state.userData.spotify_id}`)
+    } else {
+      window.location.href = "/api/auth/authorize"
+    }
+  }, [isLoggedIn, state])
 
   return (
     <div className={styles.LandingPageContainer}>
@@ -55,7 +63,7 @@ const LandingPage: Page = ({ integration, state, dispatch }) => {
         />
         <div className={styles.ButtonContainer}>
           <Button title="Search" onClick={onSearchClick} />
-          <Button title="Login" onClick={onLoginClick} />
+          <Button title={isLoggedIn ? "See Profile" : "Login"} onClick={onLoginClick} />
         </div>
       </section>
     </div>

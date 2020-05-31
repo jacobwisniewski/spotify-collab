@@ -1,6 +1,6 @@
 import { AppAction } from "./AppAction"
 import { Reducer } from "react"
-import { AppState, IntegrationStatus, TopType } from "./AppState"
+import InitialAppState, { AppState, IntegrationStatus, LoginStatus, TopType } from "./AppState"
 import { applyValidationResults } from "../utils/applyValidationResults"
 import { validateProfileSearch } from "./AppValidators"
 
@@ -15,7 +15,7 @@ const AppReducer: Reducer<AppState, AppAction> = (prevState, action): AppState =
       return {
         ...prevState,
         spotifyProfileStatus: IntegrationStatus.SUCCESS,
-        spotifyProfile: action.payload
+        userProfile: action.payload
       }
     case "SPOTIFY_PROFILE_ERROR":
       return {
@@ -27,12 +27,14 @@ const AppReducer: Reducer<AppState, AppAction> = (prevState, action): AppState =
       if (prevState.topType === TopType.TRACKS) {
         return {
           ...prevState,
-          spotifyTopTracksStatus: IntegrationStatus.LOADING
+          spotifyTopTracksStatus: IntegrationStatus.LOADING,
+          spotifyTopArtists: []
         }
       } else {
         return {
           ...prevState,
-          spotifyTopArtistsStatus: IntegrationStatus.LOADING
+          spotifyTopArtistsStatus: IntegrationStatus.LOADING,
+          spotifyTopTracks: []
         }
       }
 
@@ -74,14 +76,7 @@ const AppReducer: Reducer<AppState, AppAction> = (prevState, action): AppState =
       return {
         ...prevState,
         spotifyProfileStatus: IntegrationStatus.INITIAL,
-        spotifyProfile: {
-          spotify_id: "",
-          display_name: "",
-          profile_picture_url: "",
-          spotify_profile_url: "",
-          followers: -1,
-          extended_data: false
-        },
+        userProfile: InitialAppState.userProfile,
         profileSearchValue: ""
       }
 
@@ -103,6 +98,59 @@ const AppReducer: Reducer<AppState, AppAction> = (prevState, action): AppState =
       return {
         ...prevState,
         topType: action.payload
+      }
+
+    case "LOGIN_USER":
+      return {
+        ...prevState,
+        loginStatus: LoginStatus.LOADING
+      }
+
+    case "LOGOUT_USER":
+      return {
+        ...prevState,
+        loginStatus: LoginStatus.NO_USER
+      }
+
+    case "REFRESH_ACCESS_TOKEN_LOADING_ACTION":
+      return {
+        ...prevState,
+        refreshAccessTokenStatus: IntegrationStatus.LOADING
+      }
+
+    case "REFRESH_ACCESS_TOKEN_SUCCESS_ACTION":
+      return {
+        ...prevState,
+        refreshAccessTokenStatus: IntegrationStatus.SUCCESS
+      }
+
+    case "REFRESH_ACCESS_TOKEN_ERROR_ACTION":
+      return {
+        ...prevState,
+        refreshAccessTokenStatus: IntegrationStatus.ERROR,
+        refreshAccessTokenError: action.payload
+      }
+
+    case "USER_DATA_LOADING_ACTION":
+      return {
+        ...prevState,
+        userDataStatus: IntegrationStatus.LOADING
+      }
+
+    case "USER_DATA_SUCCESS_ACTION":
+      return {
+        ...prevState,
+        userData: action.payload,
+        userDataStatus: IntegrationStatus.SUCCESS,
+        loginStatus: LoginStatus.LOGGED_IN
+      }
+
+    case "USER_DATA_ERROR_ACTION":
+      return {
+        ...prevState,
+        userDataError: action.payload,
+        userDataStatus: IntegrationStatus.ERROR,
+        loginStatus: LoginStatus.NO_USER
       }
   }
   return prevState

@@ -1,13 +1,17 @@
 import { ActionWithEffects } from "../hooks/userReducerWithEffects"
 import { AppState, TopType } from "./AppState"
 import { AppEffectContext } from "../effects/AppEffect"
-import userProfilePageLoading from "../effects/userProfilePageLoading"
-import { SpotifyProfileResponse } from "../models/SpotifyProfileResponse"
+import getSpotifyProfileEffect from "../effects/getSpotifyProfileEffect"
 import profileSearchClickEffect from "../effects/profileSearchClickEffect"
-import spotifyUserTopTypeLoadingEffect from "../effects/spotifyUserTopTypeLoadingEffect"
+import getSpotifyUserTopTypeEffect from "../effects/getSpotifyUserTopTypeEffect"
 import { SpotifyUserTopTracksResponse } from "../models/SpotifyUserTopTracksResponse"
 import { TimeRange } from "../integrations/Integration"
 import { SpotifyUserTopArtistsResponse } from "../models/SpotifyUserTopArtistsResponse"
+import loginUserEffect from "../effects/loginUserEffect"
+import { UserDataResponse } from "../models/UserDataResponse"
+import getUserDataEffect from "../effects/getUserDataEffect"
+import refreshAccessTokenEffect from "../effects/refreshAccessTokenEffect"
+import { UserProfileResponse } from "../models/UserProfileResponse"
 
 export interface Action<T, P> extends ActionWithEffects<AppState, AppAction, AppEffectContext> {
   type: T
@@ -18,13 +22,13 @@ export type SpotifyProfileLoadingAction = Action<"SPOTIFY_PROFILE_LOADING", stri
 export const spotifyProfileLoading = (spotifyId: string): SpotifyProfileLoadingAction => ({
   type: "SPOTIFY_PROFILE_LOADING",
   payload: spotifyId,
-  effects: userProfilePageLoading
+  effects: getSpotifyProfileEffect
 })
 
-export type SpotifyProfileSuccessAction = Action<"SPOTIFY_PROFILE_SUCCESS", SpotifyProfileResponse>
-export const spotifyProfileSuccess = (spotifyProfile: SpotifyProfileResponse): SpotifyProfileSuccessAction => ({
+export type SpotifyProfileSuccessAction = Action<"SPOTIFY_PROFILE_SUCCESS", UserProfileResponse>
+export const spotifyProfileSuccess = (userProfile: UserProfileResponse): SpotifyProfileSuccessAction => ({
   type: "SPOTIFY_PROFILE_SUCCESS",
-  payload: spotifyProfile
+  payload: userProfile
 })
 
 export type SpotifyProfileErrorAction = Action<"SPOTIFY_PROFILE_ERROR", Error>
@@ -37,7 +41,7 @@ export type SpotifyUserTopTypeLoadingAction = Action<"SPOTIFY_USER_TOP_TYPE_LOAD
 export const spotifyUserTopTypeLoading = (): SpotifyUserTopTypeLoadingAction => ({
   type: "SPOTIFY_USER_TOP_TYPE_LOADING",
   payload: undefined,
-  effects: spotifyUserTopTypeLoadingEffect
+  effects: getSpotifyUserTopTypeEffect
 })
 
 export type SpotifyUserTopTracksSuccessAction = Action<"SPOTIFY_USER_TOP_TRACKS_SUCCESS", SpotifyUserTopTracksResponse>
@@ -87,13 +91,64 @@ export type TimeRangeChangeAction = Action<"TIME_RANGE_CHANGE", TimeRange>
 export const timeRangeChange = (timeRange: TimeRange): TimeRangeChangeAction => ({
   type: "TIME_RANGE_CHANGE",
   payload: timeRange,
-  effects: spotifyUserTopTypeLoadingEffect
+  effects: getSpotifyUserTopTypeEffect
 })
 
 export type TopTypeChangeAction = Action<"TOP_TYPE_CHANGE", TopType>
 export const topTypeChange = (topType: TopType): TopTypeChangeAction => ({
   type: "TOP_TYPE_CHANGE",
   payload: topType
+})
+
+export type LoginUserAction = Action<"LOGIN_USER", undefined>
+export const loginUser = (): LoginUserAction => ({
+  type: "LOGIN_USER",
+  payload: undefined,
+  effects: loginUserEffect
+})
+
+export type LogoutUserAction = Action<"LOGOUT_USER", undefined>
+export const logoutUser = (): LogoutUserAction => ({
+  type: "LOGOUT_USER",
+  payload: undefined
+})
+
+export type UserDataLoadingAction = Action<"USER_DATA_LOADING_ACTION", undefined>
+export const userDataLoading = (): UserDataLoadingAction => ({
+  type: "USER_DATA_LOADING_ACTION",
+  payload: undefined,
+  effects: getUserDataEffect
+})
+
+export type UserDataSuccessAction = Action<"USER_DATA_SUCCESS_ACTION", UserDataResponse>
+export const userDataSuccess = (userDataResponse: UserDataResponse): UserDataSuccessAction => ({
+  type: "USER_DATA_SUCCESS_ACTION",
+  payload: userDataResponse
+})
+
+export type UserDataErrorAction = Action<"USER_DATA_ERROR_ACTION", Error | undefined>
+export const userDataError = (error?: Error): UserDataErrorAction => ({
+  type: "USER_DATA_ERROR_ACTION",
+  payload: error
+})
+
+export type RefreshAccessTokenLoadingAction = Action<"REFRESH_ACCESS_TOKEN_LOADING_ACTION", undefined>
+export const refreshAccessTokenLoading = (): RefreshAccessTokenLoadingAction => ({
+  type: "REFRESH_ACCESS_TOKEN_LOADING_ACTION",
+  payload: undefined,
+  effects: refreshAccessTokenEffect
+})
+
+export type RefreshAccessTokenSuccessAction = Action<"REFRESH_ACCESS_TOKEN_SUCCESS_ACTION", undefined>
+export const refreshAccessTokenSuccess = (): RefreshAccessTokenSuccessAction => ({
+  type: "REFRESH_ACCESS_TOKEN_SUCCESS_ACTION",
+  payload: undefined
+})
+
+export type RefreshAccessTokenErrorAction = Action<"REFRESH_ACCESS_TOKEN_ERROR_ACTION", Error>
+export const refreshAccessTokenError = (error: Error): RefreshAccessTokenErrorAction => ({
+  type: "REFRESH_ACCESS_TOKEN_ERROR_ACTION",
+  payload: error
 })
 
 export type AppAction =
@@ -110,3 +165,11 @@ export type AppAction =
   | SpotifyUserTopArtistsErrorAction
   | SpotifyUserTopArtistsSuccessAction
   | TopTypeChangeAction
+  | LoginUserAction
+  | LogoutUserAction
+  | UserDataLoadingAction
+  | UserDataSuccessAction
+  | UserDataErrorAction
+  | RefreshAccessTokenLoadingAction
+  | RefreshAccessTokenSuccessAction
+  | RefreshAccessTokenErrorAction

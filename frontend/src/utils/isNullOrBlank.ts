@@ -1,4 +1,4 @@
-export const isNullOrBlank = (value: null | string) => {
+export const isNullOrBlank = (value: null | string): boolean => {
   if (value === null) {
     return true
   } else if (value.length === 0) {

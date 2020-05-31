@@ -5,20 +5,21 @@ export type ButtonClickHandler = () => void
 
 interface ButtonProps {
   title: string
-  onClick: ButtonClickHandler
+  onClick?: ButtonClickHandler
+  disabled?: boolean
 }
 
-const Button: FunctionComponent<ButtonProps> = ({ title, onClick }) => {
+const Button: FunctionComponent<ButtonProps> = ({ title, onClick, disabled }) => {
   const onButtonClick = useCallback<MouseEventHandler<HTMLButtonElement>>(
     (event) => {
       event.preventDefault()
-      onClick()
+      !disabled && onClick!()
     },
     [onClick]
   )
 
   return (
-    <button className={styles.Button} onClick={onButtonClick}>
+    <button className={styles.Button} onClick={onClick ? onButtonClick : () => {}} disabled={disabled ? disabled : false}>
       {title}
     </button>
   )
