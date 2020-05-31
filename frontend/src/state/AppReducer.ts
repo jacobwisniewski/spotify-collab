@@ -67,9 +67,18 @@ const AppReducer: Reducer<AppState, AppAction> = (prevState, action): AppState =
       }
 
     case "TIME_RANGE_CHANGE":
-      return {
-        ...prevState,
-        timeRangeSelected: action.payload
+      if (prevState.topType === TopType.TRACKS) {
+        return {
+          ...prevState,
+          timeRangeSelected: action.payload,
+          spotifyTopTracksStatus: IntegrationStatus.LOADING
+        }
+      } else {
+        return {
+          ...prevState,
+          timeRangeSelected: action.payload,
+          spotifyTopArtistsStatus: IntegrationStatus.LOADING
+        }
       }
 
     case "NAVIGATE_TO_LANDING_PAGE":
