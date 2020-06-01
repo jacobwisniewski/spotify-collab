@@ -86,6 +86,8 @@ const AppReducer: Reducer<AppState, AppAction> = (prevState, action): AppState =
         ...prevState,
         spotifyProfileStatus: IntegrationStatus.INITIAL,
         userProfile: InitialAppState.userProfile,
+        spotifyTopTracks: [],
+        spotifyTopArtists: [],
         profileSearchValue: ""
       }
 
